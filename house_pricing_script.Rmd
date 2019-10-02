@@ -155,7 +155,7 @@ df_antiguedad= mutate(df_antiguedad,antiguedad=(year(date)-yr_built))
 par(mfrow = c(1,2))
 boxplot(df_antiguedad$antiguedad)
 summary(df_antiguedad$antiguedad)
-
+plot(price~antiguedad,data=df_antiguedad)
 
 
 ```
