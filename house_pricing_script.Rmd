@@ -160,6 +160,8 @@ plot(price~antiguedad,data=df_antiguedad)
 cor(df_antiguedad[,c("price","antiguedad")])
 ```
 
+
+
 ### DUPLICADOS
 
 ```{r}
