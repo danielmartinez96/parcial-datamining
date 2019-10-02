@@ -1,5 +1,5 @@
 ---
-author: Alvarez Ignacio Nicolas y ::::::::
+author: Alvarez Ignacio Nicolas
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 output: html_document
 ---
@@ -194,4 +194,5 @@ df_sin_date = select(df_sin_condition, -c(date))
 ```
 
 
-
+### TIPS
+* 
