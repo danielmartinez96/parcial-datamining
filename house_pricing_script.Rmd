@@ -1,4 +1,8 @@
 ---
+<<<<<<< HEAD
+=======
+author: Alvarez Ignacio Nicolas
+>>>>>>> 8bef581... Algo se cambio
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 
 fig:height: 4
@@ -259,6 +263,7 @@ df_sin_date = select(df_sin_condition, -c(date))
 ```
 
 
+<<<<<<< HEAD
 ```{r}
 prueba2 = mutate(raw_data,)
 ```
@@ -359,3 +364,7 @@ hist(batBet$bañosCuartos,breaks = 100)
 
 cor(batBet[,c("price","bañosCuartos")])
 ```
+=======
+### TIPS
+* 
+>>>>>>> 8bef581... Algo se cambio
