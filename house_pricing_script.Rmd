@@ -130,36 +130,47 @@ cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo",
 plot(prueba$price~prueba$sqft_living.nuevo)
 ```
 
+### DUPLICADOS
+
+```{r}
+duplicadosID = raw_data[duplicated(raw_data$id), ]
+df_sin_repetidos = raw_data %>% group_by(id) %>% filter(price==max(price))
+
+```
+
 ### CONDITION & GRADE
+197 casos de valores duplicados en ID, fechas con diferencia de un año y un precio que en todos los casos se ingrementó, nos quedamos con el ultimo precio mas actualizado
 ```{r}
-summary(raw_data$condition)
-summary(raw_data$grade)
+summary(df_sin_repetidos$condition)
+summary(df_sin_repetidos$grade)
 ```
 
 ```{r}
 par(mfrow = c(1,2))
-boxplot(raw_data$condition, main="condition")
-boxplot(raw_data$grade, main="grade")
+boxplot(df_sin_repetidos$condition, main="condition")
+boxplot(df_sin_repetidos$grade, main="grade")
 ```
 ```{r}
 par(mfrow = c(1,2))
-pie(table(as.factor(raw_data$condition)), main="condition")
-pie(table(as.factor(raw_data$grade)), main="grade")
+pie(table(as.factor(df_sin_repetidos$condition)), main="condition")
+pie(table(as.factor(df_sin_repetidos$grade)), main="grade")
 ```
 
 ```{r}
 
-df_sqft = select(raw_data, price, grade, condition)
+df_sqft = select(df_sin_repetidos, price, grade, condition)
 corrplot(cor(df_sqft),method="square")
 cor(df_sqft)
 
 ```
 
 ```{r}
-df_sin_condition = select(raw_data, -c(condition))
+df_sin_condition = select(df_sin_repetidos, -c(condition))
 ```
 
 ### DATE
+
+La fecha presenta un formato que es necesario cambiar, se busca ver la relacion entre los distintos año/meses y el precio de las casas
 
 ```{r}
 df_sin_condition$date =  as.Date(df_sin_condition$date, format = "%Y%m%dT000000")
@@ -174,12 +185,16 @@ df_fecha_form = df_sin_condition %>% mutate(date_year = as.factor(paste(year,mon
 pie(table(df_fecha_form$date_year))
 ```
 
+Salvo casos particulares parece que la fecha de publicacion supongo, no afecta el precio de una casa.
 ```{r}
 plot(df_fecha_form$price ~ df_fecha_form$date_year)
 ```
 
+Se saca el la fecha
+
 ```{r}
-df_sin_date = select(df_sin_condition, -c(id,date))
+df_sin_date = select(df_sin_condition, -c(date))
 ```
+
 
 
