@@ -1,13 +1,15 @@
 ---
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
-output: html_notebook
-df_print: paged
+author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinez"
 fig:height: 4
+output:
+  html_document:
+    df_print: paged
 fig:width: 6
 theme: readable
+df_print: paged
 toc: yes
 toc_float: yes
-author: Alvarez Ignacio Nicolas-Martinez Daniel Martinez
 ---
 
 
@@ -27,16 +29,8 @@ library("lubridate")
 ```
 ### Establecimiento del entorno de trabajo
 
-```{r }
+```{r}
 #setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
-setwd("D:/R/house-pricing")
-
-#setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
-```
-
-```{r }
-setwd("C:/R/house-pricing/parcial-datamining")
-
 ```
 
 ###Cargar del DataSet
