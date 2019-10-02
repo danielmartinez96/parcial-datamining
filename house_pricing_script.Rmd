@@ -175,10 +175,7 @@ La fecha presenta un formato que es necesario cambiar, se busca ver la relacion 
 ```{r}
 df_sin_condition$date =  as.Date(df_sin_condition$date, format = "%Y%m%dT000000")
 
-year = lubridate::year(df_sin_condition$date)
-month = lubridate::month(df_sin_condition$date)
-
-df_fecha_form = df_sin_condition %>% mutate(date_year = as.factor(paste(year,month, sep="/")))
+df_fecha_form = df_sin_condition  %>% mutate(date_year = paste(year(date), month(date), sep="/"))
 ```
 
 ```{r}
@@ -187,7 +184,7 @@ pie(table(df_fecha_form$date_year))
 
 Salvo casos particulares parece que la fecha de publicacion supongo, no afecta el precio de una casa.
 ```{r}
-plot(df_fecha_form$price ~ df_fecha_form$date_year)
+plot(df_fecha_form$price ~ as.factor(df_fecha_form$date_year))
 ```
 
 Se saca el la fecha
