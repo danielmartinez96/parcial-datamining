@@ -23,7 +23,11 @@ library("class")
 ```
 ### Establecimiento del entorno de trabajo
 ```{r Librerías}
-setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
+#setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
+```
+
+```{r Librerías}
+setwd("C:/R/house-pricing/parcial-datamining")
 ```
 
 ###Cargar del DataSet
@@ -89,21 +93,7 @@ cor(df_sqft)
 ```
 
 
-```{r Librerías}
 
-prueba = raw_data
-
-prueba$sqft_living = raw_data$sqft_above / raw_data$sqft_living
-prueba$sqft_basement = raw_data$sqft_above / raw_data$sqft_basement
-
-head(prueba)
-summary(prueba)
-
-corrplot(cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
-
-cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")])
-
-```
 
 ```{r Librerías}
 
@@ -132,4 +122,54 @@ cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo",
 
 ```{r Librerías}
 plot(prueba$price~prueba$sqft_living.nuevo)
+```
+
+
+#Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
+```{r Librerías}
+#Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
+corrplot(cor(raw_data[,c("yr_renovated","yr_built")]),method="square")
+
+renovacion= filter(raw_data,yr_renovated>0)
+#observaciones 914
+
+renovacion2= filter(raw_data,yr_renovated>=yr_built)
+#observaciones 914
+#por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
+
+
+par(mfrow = c(1,3))
+boxplot(renovacion$yr_renovated, main="Renovated")$stats
+boxplot(renovacion$yr_built, main="Built")$stats
+#Built esta bastante bien a mi parecer, luego renovacion tiene muchos outliners
+
+renovacion= filter(renovacion,yr_renovated>1957)
+#Nos quito unas observacioens insignificantes asi que podria ser factible este filtro
+
+par(mfrow = c(1,3))
+
+boxplot(renovacion$yr_renovated, main="Renovated Desdepues del filtro")$stats
+
+summary(renovacion$yr_renovated)
+
+plot(renovacion$price~renovacion$yr_renovated)
+```
+
+
+
+```{r Librerías}
+raw_data=mutate(raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
+raw_data=filter(raw_data,yr_renovated.nuevo!="quitar")
+raw_data$yr_renovated.nuevo=as.factor(raw_data$yr_renovated.nuevo)
+
+
+par(mfrow = c(1,2))
+pie(summary(as.factor(raw_data$yr_renovated.nuevo)), labels = c("No_renovado","renovado"), main = "Distribución de 'Renovacion'")
+
+plot(raw_data$price~raw_data$yr_renovated.nuevo)
+
+raw_data <- dummy_cols(raw_data, select_columns = c("yr_renovated.nuevo"))
+raw_data$yr_renovated.nuevo <- NULL
+corrplot(cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
+cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
 ```
