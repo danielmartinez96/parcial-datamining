@@ -3,9 +3,6 @@ title: "house-pricing"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ```{r Librerías}
 library("dplyr")
@@ -79,6 +76,8 @@ summary(prueba)
 corrplot(cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")]),method="square")
 
 cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")])
+
+plot(raw_data$sqft_living~raw_data$sqft_basement)
 
 ```
 
