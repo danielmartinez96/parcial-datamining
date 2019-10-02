@@ -1,7 +1,13 @@
 ---
-author: Alvarez Ignacio Nicolas y ::::::::
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
-output: html_document
+output: html_notebook
+df_print: paged
+fig:height: 4
+fig:width: 6
+theme: readable
+toc: yes
+toc_float: yes
+author: Alvarez Ignacio Nicolas-Martinez Daniel Martinez
 ---
 
 
@@ -20,24 +26,25 @@ library("class")
 library("lubridate")
 ```
 ### Establecimiento del entorno de trabajo
-```{r Librerías}
-setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
+```{r }
+#setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
+setwd("D:/R/house-pricing")
 ```
 
 ###Cargar del DataSet
-```{r Librerías}
+```{r }
 
 raw_data <- read.csv("house_data.csv")
 ```
 
 ###Graficos de Dispersión
-```{r Librerías}
+```{r }
 
 plot(price~., data=raw_data,col="blue")
 ```
 
 ### Estructura del DataSet
-```{r Librerías}
+```{r }
 str(raw_data)
 ```
 
@@ -74,7 +81,7 @@ boxplot(raw_data$sqft_basement, main="sqft_basement (ft^2)")
 ```
 
 
-```{r Librerías}
+```{r }
 df_sqft = select(raw_data, sqft_living, sqft_lot, sqft_above, sqft_living15, sqft_lot15, sqft_basement)
 
 corrplot(cor(df_sqft),method="square")
@@ -84,7 +91,7 @@ cor(df_sqft)
 ```
 
 
-```{r Librerías}
+```{r}
 
 prueba = raw_data
 
@@ -100,7 +107,7 @@ cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15"
 
 ```
 
-```{r Librerías}
+```{r }
 
 prueba= raw_data
 
@@ -125,7 +132,7 @@ plot(raw_data$sqft_living~raw_data$sqft_basement)
 
 ```
 
-```{r Librerías}
+```{r }
 plot(prueba$price~prueba$sqft_living.nuevo)
 ```
 
@@ -192,5 +199,9 @@ Se saca el la fecha
 df_sin_date = select(df_sin_condition, -c(date))
 ```
 
+
+```{r}
+prueba2 = mutate(raw_data,)
+```
 
 
