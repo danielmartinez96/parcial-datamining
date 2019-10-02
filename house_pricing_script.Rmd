@@ -157,7 +157,7 @@ boxplot(df_antiguedad$antiguedad)
 summary(df_antiguedad$antiguedad)
 plot(price~antiguedad,data=df_antiguedad)
 
-
+cor(df_antiguedad[,c("price","antiguedad")])
 ```
 
 ### DUPLICADOS
