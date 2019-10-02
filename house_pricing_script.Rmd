@@ -1,0 +1,89 @@
+---
+title: "house-pricing"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Librerías}
+library("dplyr")
+library("corrplot")
+library("fastDummies")
+library("ggplot2")
+library("rpart")
+library("rpart.plot")
+library("caret")
+library("caTools")
+library("randomForest")
+library("class")
+```
+## R Markdown
+```{r Librerías}
+
+setwd("D://R//house-pricing")
+```
+#Cargar el csv
+```{r Librerías}
+
+raw_data <- read.csv("house_data.csv")
+```
+
+
+
+```{r Librerías}
+
+plot(price~., data=raw_data,col="blue")
+```
+
+```{r Librerías}
+corrplot(cor(raw_data[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
+
+cor(raw_data[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")])
+
+```
+
+
+```{r Librerías}
+
+prueba= raw_data
+
+prueba$sqft_living=raw_data$sqft_above/raw_data$sqft_living
+prueba$sqft_basement=raw_data$sqft_above/raw_data$sqft_basement
+head(prueba)
+summary(prueba)
+corrplot(cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
+
+cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")])
+
+```
+
+```{r Librerías}
+
+prueba= raw_data
+
+prueba = mutate(prueba,sqft_living.nuevo=raw_data$sqft_above/raw_data$sqft_living)
+
+prueba = mutate(prueba,sqft_basement.nuevo=ifelse(raw_data$sqft_basement>0,raw_data$sqft_above/raw_data$sqft_basement,0))
+
+prueba = mutate(prueba,sqft_lot15.nuevo=(raw_data$sqft_lot-raw_data$sqft_lot15)/raw_data$sqft_lot)
+
+prueba = mutate(prueba,sqft_living15.nuevo=(raw_data$sqft_living-raw_data$sqft_living15)/raw_data$sqft_living)
+
+#prueba$sqft_living=raw_data$sqft_above/raw_data$sqft_living
+#prueba$sqft_basement=raw_data$sqft_above/raw_data$sqft_basement
+head(prueba)
+summary(prueba)
+
+corrplot(cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")]),method="square")
+
+cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")])
+
+```
+
+
+
+```{r Librerías}
+plot(prueba$price~prueba$sqft_living.nuevo)
+```
