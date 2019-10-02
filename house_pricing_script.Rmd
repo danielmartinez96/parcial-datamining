@@ -26,18 +26,17 @@ library("class")
 library("lubridate")
 ```
 ### Establecimiento del entorno de trabajo
-<<<<<<< HEAD
+
 ```{r }
 #setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
 setwd("D:/R/house-pricing")
-=======
-```{r Librerías}
+
 #setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
 ```
 
-```{r Librerías}
+```{r }
 setwd("C:/R/house-pricing/parcial-datamining")
->>>>>>> 43fbe6a840ca3b8d12844dc98a807e050bf40705
+
 ```
 
 ###Cargar del DataSet
@@ -100,7 +99,6 @@ cor(df_sqft)
 ```
 
 
-<<<<<<< HEAD
 ```{r}
 
 prueba = raw_data
@@ -112,11 +110,6 @@ head(prueba)
 summary(prueba)
 
 corrplot(cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
-=======
->>>>>>> 43fbe6a840ca3b8d12844dc98a807e050bf40705
-
-
-```{r }
 
 prueba= raw_data
 
@@ -214,15 +207,14 @@ prueba2 = mutate(raw_data,)
 ```
 
 
-<<<<<<< HEAD
-=======
-```{r Librerías}
+
+```{r }
 plot(prueba$price~prueba$sqft_living.nuevo)
 ```
 
 
 #Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
-```{r Librerías}
+```{r }
 #Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
 corrplot(cor(raw_data[,c("yr_renovated","yr_built")]),method="square")
 
@@ -253,7 +245,7 @@ plot(renovacion$price~renovacion$yr_renovated)
 
 
 
-```{r Librerías}
+```{r }
 raw_data=mutate(raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
 raw_data=filter(raw_data,yr_renovated.nuevo!="quitar")
 raw_data$yr_renovated.nuevo=as.factor(raw_data$yr_renovated.nuevo)
@@ -269,4 +261,3 @@ raw_data$yr_renovated.nuevo <- NULL
 corrplot(cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
 cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
 ```
->>>>>>> 43fbe6a840ca3b8d12844dc98a807e050bf40705
