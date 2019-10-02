@@ -20,6 +20,7 @@ library("caret")
 library("caTools")
 library("randomForest")
 library("class")
+library("lubridate")
 ```
 ### Establecimiento del entorno de trabajo
 ```{r Librerías}
@@ -69,13 +70,11 @@ boxplot(raw_data$sqft_lot, main="sqft_lot (ft^2)")
 boxplot(raw_data$sqft_lot15, main="sqft_lot15 (ft^2)")
 ```
 
-
 ```{r}
 par(mfrow = c(1,2))
 boxplot(raw_data$sqft_above, main="sqft_above (ft^2)")
 boxplot(raw_data$sqft_basement, main="sqft_basement (ft^2)")
 ```
-
 
 
 ```{r Librerías}
@@ -159,4 +158,28 @@ cor(df_sqft)
 ```{r}
 df_sin_condition = select(raw_data, -c(condition))
 ```
+
+### DATE
+
+```{r}
+df_sin_condition$date =  as.Date(df_sin_condition$date, format = "%Y%m%dT000000")
+
+year = lubridate::year(df_sin_condition$date)
+month = lubridate::month(df_sin_condition$date)
+
+df_fecha_form = df_sin_condition %>% mutate(date_year = as.factor(paste(year,month, sep="/")))
+```
+
+```{r}
+pie(table(df_fecha_form$date_year))
+```
+
+```{r}
+plot(df_fecha_form$price ~ df_fecha_form$date_year)
+```
+
+```{r}
+df_sin_date = select(df_sin_condition, -c(id,date))
+```
+
 
