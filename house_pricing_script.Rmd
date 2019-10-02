@@ -35,7 +35,6 @@ library("lubridate")
 
 ###Cargar del DataSet
 ```{r }
-
 raw_data <- read.csv("house_data.csv")
 ```
 
@@ -131,6 +130,22 @@ plot(raw_data$sqft_living~raw_data$sqft_basement)
 ```{r }
 plot(prueba$price~prueba$sqft_living.nuevo)
 ```
+```{r Outliers Price}
+
+price_con_outliers= filter(raw_data,price>1010000)
+price_sin_outliers= filter(raw_data,!price>1010000)
+
+
+
+par(mfrow = c(1,2))
+boxplot(price_con_outliers$price, main="con outliers")
+boxplot(price_sin_outliers$price, main="sin outliers")
+hist(price_sin_outliers$price, breaks = 100)
+summary(price_sin_outliers$price)
+
+
+```
+
 
 ### DUPLICADOS
 
