@@ -22,7 +22,7 @@ library("class")
 ## R Markdown
 ```{r Librerías}
 
-setwd("D://R//house-pricing")
+setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
 ```
 #Cargar el csv
 ```{r Librerías}
