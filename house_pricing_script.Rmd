@@ -146,6 +146,19 @@ summary(price_sin_outliers$price)
 
 ```
 
+```{r Antiguedad }
+df_antiguedad= raw_data
+df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
+df_antiguedad= mutate(df_antiguedad,antiguedad=(year(date)-yr_built))
+
+
+par(mfrow = c(1,2))
+boxplot(df_antiguedad$antiguedad)
+summary(df_antiguedad$antiguedad)
+
+
+
+```
 
 ### DUPLICADOS
 
