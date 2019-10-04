@@ -1,19 +1,21 @@
 ---
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
-author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinez"
+
 fig:height: 4
 output:
-  html_document:
+  html_notebook:
     df_print: paged
-fig:width: 6
-theme: readable
-df_print: paged
-toc: yes
-toc_float: yes
+    fig:height: 4
+    fig:width: 6
+    theme: readable
+    toc: yes
+    toc_float: yes
+    
+author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinez"
 ---
 
 
-##Carga de Librerias
+# Carga de Librerias
 ```{r Librerías}
 library("dplyr")
 library("corrplot")
@@ -27,16 +29,17 @@ library("randomForest")
 library("class")
 library("lubridate")
 ```
-### Establecimiento del entorno de trabajo
 
+# Establecimiento del entorno de trabajo
 ```{r}
 #setwd("~/R-WORKSPACE/Parcial2/parcial-datamining/")
 ```
 
-###Cargar del DataSet
-```{r }
-raw_data <- read.csv("house_data.csv")
+# Cargar del DataSet
+```{r Carga del DataSet}
+raw_data <- read_csv("house_data.csv")
 ```
+
 
 ###Graficos de Dispersión
 ```{r }
@@ -45,18 +48,28 @@ raw_data <- read.csv("house_data.csv")
 str(as.factor(raw_data$zipcode))
 
 ```
+=======
+# Analisis Exploratorio 
 
-### Estructura del DataSet
-```{r }
+
+## Estructura del DataSet
+```{r Estructura del DataSet}
 str(raw_data)
 ```
 
-### Descripcion del DataSet
-```{r}
+## Descripcion del DataSet
+```{r Descripcion del DataSet}
 summary(raw_data)
 ```
 
-### BoxPlot
+## Graficos de Dispersion: Price vs .
+```{r }
+plot(price~., data=raw_data,col="blue")
+```
+
+
+
+## BoxPlots
 
 ```{r}
 par(mfrow = c(1,3))
