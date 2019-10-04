@@ -27,6 +27,7 @@ library("caTools")
 library("randomForest")
 library("class")
 library("lubridate")
+library("e1071")
 ```
 
 # Establecimiento del entorno de trabajo
@@ -36,77 +37,77 @@ library("lubridate")
 
 # Cargar del DataSet
 ```{r Carga del DataSet}
-_raw_data <- read.csv("house_data.csv")
+a_raw_data <- read.csv("house_data.csv")
 ```
 
 # Analisis Exploratorio 
 
 ## DataSet
 ```{r}
-_raw_data
+a_raw_data
 ```
 
 ## Estructura del DataSet
 ```{r Estructura del DataSet}
-str(_raw_data)
+str(a_raw_data)
 ```
 
 ## Descripcion del DataSet
 ```{r Descripcion del DataSet}
-summary(_raw_data)
+summary(a_raw_data)
 ```
 
 ## Analasis de variables
 
 ```{r Boxplot price-bedrooms-bathroom}
 par(mfrow = c(1,3))
-boxplot(_raw_data$price, main="Price")
-boxplot(_raw_data$bedrooms, main="Cant Bedrooms")
-boxplot(_raw_data$bathrooms, main="Cant Bathrooms")
+boxplot(a_raw_data$price, main="Price")
+boxplot(a_raw_data$bedrooms, main="Cant Bedrooms")
+boxplot(a_raw_data$bathrooms, main="Cant Bathrooms")
 ```
 
 ```{r Boxplot sqft_living-sqft_living15}
 par(mfrow = c(1,2))
-boxplot(_raw_data$sqft_living, main="sqft_living (ft^2)")
-boxplot(_raw_data$sqft_living15, main="sqft_living15 (ft^2)")
+boxplot(a_raw_data$sqft_living, main="sqft_living (ft^2)")
+boxplot(a_raw_data$sqft_living15, main="sqft_living15 (ft^2)")
 ```
 
 ```{r Boxplot sqft_lot-sqft_lot15}
 par(mfrow = c(1,2))
-boxplot(_raw_data$sqft_lot, main="sqft_lot (ft^2)")
-boxplot(_raw_data$sqft_lot15, main="sqft_lot15 (ft^2)")
+boxplot(a_raw_data$sqft_lot, main="sqft_lot (ft^2)")
+boxplot(a_raw_data$sqft_lot15, main="sqft_lot15 (ft^2)")
 ```
 
 ```{r Boxplot sqft_above-sqft_basement}
 par(mfrow = c(1,2))
-boxplot(_raw_data$sqft_above, main="sqft_above (ft^2)")
-boxplot(_raw_data$sqft_basement, main="sqft_basement (ft^2)")
+boxplot(a_raw_data$sqft_above, main="sqft_above (ft^2)")
+boxplot(a_raw_data$sqft_basement, main="sqft_basement (ft^2)")
 ```
 
 ```{r }
 par(mfrow = c(1,3))
-barplot(table(as.factor(_raw_data$waterfront)), main="waterfront", col="blue")
-barplot(table(as.factor(_raw_data$view)), main="view",col="blue")
-barplot(table(as.factor(_raw_data$floors)), main="floors", col="blue")
+barplot(table(as.factor(a_raw_data$waterfront)), main="waterfront", col="blue")
+barplot(table(as.factor(a_raw_data$view)), main="view",col="blue")
+barplot(table(as.factor(a_raw_data$floors)), main="floors", col="blue")
 ```
 
 
 # Estudio de la variable target: Price
 ## Histograma
 ```{r}
-hist(_raw_data$price, col="blue", breaks = 60, freq = F)
-lines(density(_raw_data$price), col = "red", lwd=2)
-rug(_raw_data$price)
+hist(a_raw_data$price, col="blue", breaks = 60, freq = F)
+lines(density(a_raw_data$price), col = "red", lwd=2)
+rug(a_raw_data$price)
 ```
 
 ## Graficos de Dispersion: Price vs Todos
 ```{r Graficos de Dispersion: Price vs Todos}
-plot(price~., data=_raw_data,col="blue")
+plot(price~., data=a_raw_data,col="blue")
 ```
 
 ## Estudio de correlacion
 ```{r Estudio de correlacion}
-df_sqft = select(_raw_data,-c("id","date"))
+df_sqft = select(a_raw_data,-c("id","date"))
 corrplot(cor(df_sqft),type="upper", method="pie")
 cor(df_sqft)
 ```
@@ -114,28 +115,28 @@ cor(df_sqft)
 
 ```{r}
 
-prueba = _raw_data
+prueba = a_raw_data
 
-prueba$sqft_living = _raw_data$sqft_above / _raw_data$sqft_living
-prueba$sqft_basement = _raw_data$sqft_above / _raw_data$sqft_basement
+prueba$sqft_living = a_raw_data$sqft_above / a_raw_data$sqft_living
+prueba$sqft_basement = a_raw_data$sqft_above / a_raw_data$sqft_basement
 
 head(prueba)
 summary(prueba)
 
 corrplot(cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
 
-prueba= _raw_data
+prueba= a_raw_data
 
-prueba = mutate(prueba,sqft_living.nuevo=_raw_data$sqft_above/_raw_data$sqft_living)
+prueba = mutate(prueba,sqft_living.nuevo=a_raw_data$sqft_above/a_raw_data$sqft_living)
 
-prueba = mutate(prueba,sqft_basement.nuevo=ifelse(_raw_data$sqft_basement>0,_raw_data$sqft_above/_raw_data$sqft_basement,0))
+prueba = mutate(prueba,sqft_basement.nuevo=ifelse(a_raw_data$sqft_basement>0,a_raw_data$sqft_above/a_raw_data$sqft_basement,0))
 
-prueba = mutate(prueba,sqft_lot15.nuevo=(_raw_data$sqft_lot-_raw_data$sqft_lot15)/_raw_data$sqft_lot)
+prueba = mutate(prueba,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
 
-prueba = mutate(prueba,sqft_living15.nuevo=(_raw_data$sqft_living-_raw_data$sqft_living15)/_raw_data$sqft_living)
+prueba = mutate(prueba,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
 
-#prueba$sqft_living=_raw_data$sqft_above/_raw_data$sqft_living
-#prueba$sqft_basement=_raw_data$sqft_above/_raw_data$sqft_basement
+#prueba$sqft_living=a_raw_data$sqft_above/a_raw_data$sqft_living
+#prueba$sqft_basement=a_raw_data$sqft_above/a_raw_data$sqft_basement
 head(prueba)
 summary(prueba)
 
@@ -143,7 +144,7 @@ corrplot(cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living1
 
 cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")])
 
-plot(_raw_data$sqft_living~_raw_data$sqft_basement)
+plot(a_raw_data$sqft_living~a_raw_data$sqft_basement)
 
 ```
 
@@ -152,8 +153,8 @@ plot(prueba$price~prueba$sqft_living.nuevo)
 ```
 ```{r Outliers Price}
 
-price_con_outliers= filter(_raw_data,price>1010000)
-price_sin_outliers= filter(_raw_data,!price>1010000)
+price_con_outliers= filter(a_raw_data,price>1010000)
+price_sin_outliers= filter(a_raw_data,!price>1010000)
 
 
 
@@ -167,7 +168,7 @@ summary(price_sin_outliers$price)
 ```
 
 ```{r Antiguedad }
-df_antiguedad= _raw_data
+df_antiguedad= a_raw_data
 df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
 df_antiguedad= mutate(df_antiguedad,antiguedad=(year(date)-yr_built))
 
@@ -185,8 +186,8 @@ cor(df_antiguedad[,c("price","antiguedad")])
 ### DUPLICADOS
 
 ```{r}
-duplicadosID = _raw_data[duplicated(_raw_data$id), ]
-df_sin_repetidos = _raw_data %>% group_by(id) %>% filter(price==max(price))
+duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
+df_sin_repetidos = a_raw_data %>% group_by(id) %>% filter(price==max(price))
 
 ```
 
@@ -246,9 +247,8 @@ df_sin_date = select(df_sin_condition, -c(date))
 ```
 
 
-<<<<<<< HEAD
 ```{r}
-prueba2 = mutate(_raw_data,)
+prueba2 = mutate(a_raw_data,)
 ```
 
 
@@ -261,12 +261,12 @@ plot(prueba$price~prueba$sqft_living.nuevo)
 #Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
 ```{r }
 #Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
-corrplot(cor(_raw_data[,c("yr_renovated","yr_built")]),method="square")
+corrplot(cor(a_raw_data[,c("yr_renovated","yr_built")]),method="square")
 
-renovacion= filter(_raw_data,yr_renovated>0)
+renovacion= filter(a_raw_data,yr_renovated>0)
 #observaciones 914
 
-renovacion2= filter(_raw_data,yr_renovated>=yr_built)
+renovacion2= filter(a_raw_data,yr_renovated>=yr_built)
 #observaciones 914
 #por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
 
@@ -291,22 +291,35 @@ plot(renovacion$price~renovacion$yr_renovated)
 
 
 ```{r }
-_raw_data=mutate(_raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
-_raw_data=filter(_raw_data,yr_renovated.nuevo!="quitar")
-_raw_data$yr_renovated.nuevo=as.factor(_raw_data$yr_renovated.nuevo)
+#a_raw_data=mutate(a_raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
+#a_raw_data=filter(a_raw_data,yr_renovated.nuevo!="quitar")
+#a_raw_data$yr_renovated.nuevo=as.factor(a_raw_data$yr_renovated.nuevo)
 
 
-par(mfrow = c(1,2))
-pie(summary(as.factor(_raw_data$yr_renovated.nuevo)), labels = c("No_renovado","renovado"), main = "Distribución de 'Renovacion'")
+#par(mfrow = c(1,2))
+#pie(summary(as.factor(a_raw_data$yr_renovated.nuevo)), labels = c("No_renovado","renovado"), main = "Distribución de 'Renovacion'")
 
-plot(_raw_data$price~_raw_data$yr_renovated.nuevo)
+#plot(a_raw_data$price~a_raw_data$yr_renovated.nuevo)
 
-_raw_data <- dummy_cols(_raw_data, select_columns = c("yr_renovated.nuevo"))
-_raw_data$yr_renovated.nuevo <- NULL
-corrplot(cor(_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
-cor(_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
+#a_raw_data <- dummy_cols(a_raw_data, select_columns = c("yr_renovated.nuevo"))
+#a_raw_data$yr_renovated.nuevo <- NULL
+#corrplot(cor(a_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
+#cor(a_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
 ```
-=======
+
 ### DE ACA EN ADELANTE HACER PRUEBAS 
+
+```{r INICIO DE LAS PRUEBAS}
+#df_aux <- a_raw_data %>% mutate(dif_sqft15 = a_raw_data$sqft_living15 - a_raw_data$sqft_living)
+#corrplot(cor(select(df_aux,-c("id","date"))),type="upper", method="pie")
+#corrplot(cor(select(df_aux,-c("id","date", "sqft_living15"))),type="upper", method="pie")
+
+#df_aux <- a_raw_data %>% select(starts_with("sqft"))
+#df_aux
+#ABOVE + BASEMENT = LIVING
+
+#corrplot(cor(select(a_raw_data,-c("id","date", "sqft_living", "sqft_lot", "sqft_above", "sqft_basement"))),type="upper", method="pie")
+
+```
 
 
