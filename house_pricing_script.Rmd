@@ -1,8 +1,11 @@
 ---
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 author: Alvarez Ignacio Nicolas
 >>>>>>> 8bef581... Algo se cambio
+=======
+>>>>>>> b453971... asd
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 
 fig:height: 4
@@ -366,5 +369,8 @@ cor(batBet[,c("price","bañosCuartos")])
 ```
 =======
 ### TIPS
+<<<<<<< HEAD
 * 
 >>>>>>> 8bef581... Algo se cambio
+=======
+>>>>>>> b453971... asd
