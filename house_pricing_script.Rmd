@@ -41,7 +41,9 @@ raw_data <- read.csv("house_data.csv")
 ###Graficos de Dispersión
 ```{r }
 
-plot(price~., data=raw_data,col="blue")
+#plot(price~., data=raw_data,col="blue")
+str(as.factor(raw_data$zipcode))
+
 ```
 
 ### Estructura del DataSet
@@ -284,4 +286,45 @@ raw_data <- dummy_cols(raw_data, select_columns = c("yr_renovated.nuevo"))
 raw_data$yr_renovated.nuevo <- NULL
 corrplot(cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
 cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
+```
+
+```{r Zipcode relacion con lat y long }
+zipcodepro=raw_data
+#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
+cor(zipcodepro[,c("price","zipcode","lat","long")])
+```
+
+
+```{r Price con bedroom y bathroom }
+plot(price~bedrooms+bathrooms, data=raw_data)
+#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
+cor(raw_data[,c("price","bedrooms","bathrooms")])
+
+
+par(mfrow = c(1,2))
+boxplot(raw_data$bedrooms)
+summary(raw_data$bedrooms)
+hist(raw_data$bedrooms, breaks = 20)
+
+
+boxplot(raw_data$bathrooms)
+summary(raw_data$bathrooms)
+hist(raw_data$bathrooms,breaks = 20)
+
+plot(bedrooms~bathrooms, data=raw_data)
+batBet=raw_data
+batBet$bathrooms=as.numeric(batBet$bathrooms)
+batBet= mutate(raw_data,bañosCuartos=ifelse(bathrooms>0,(bedrooms/bathrooms),0))
+
+plot(price~bañosCuartos, data=batBet)
+
+batBet=filter(batBet,bañosCuartos<3.18&bañosCuartos>0.3)
+batBet= filter(batBet,price<1010000)
+boxplot(batBet$bañosCuartos)
+boxplot(batBet$price)
+summary(batBet$bañosCuartos)
+hist(batBet$bañosCuartos,breaks = 100)
+
+
+cor(batBet[,c("price","bañosCuartos")])
 ```
