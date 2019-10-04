@@ -1,8 +1,4 @@
 ---
-<<<<<<< HEAD
-=======
-author: Alvarez Ignacio Nicolas
->>>>>>> 8bef581f2bfe32e11593ef21bb940822013d8a84
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 
 fig:height: 4
@@ -313,5 +309,3 @@ cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","p
 ```
 =======
 ### TIPS
-* 
->>>>>>> 8bef581f2bfe32e11593ef21bb940822013d8a84
