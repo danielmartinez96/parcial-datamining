@@ -1,4 +1,8 @@
 ---
+<<<<<<< HEAD
+=======
+author: Alvarez Ignacio Nicolas
+>>>>>>> 8bef581f2bfe32e11593ef21bb940822013d8a84
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 
 fig:height: 4
@@ -247,6 +251,7 @@ df_sin_date = select(df_sin_condition, -c(date))
 ```
 
 
+<<<<<<< HEAD
 ```{r}
 prueba2 = mutate(raw_data,)
 ```
@@ -306,3 +311,7 @@ raw_data$yr_renovated.nuevo <- NULL
 corrplot(cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
 cor(raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
 ```
+=======
+### TIPS
+* 
+>>>>>>> 8bef581f2bfe32e11593ef21bb940822013d8a84
