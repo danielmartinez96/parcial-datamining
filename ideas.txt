@@ -1,0 +1,7 @@
+bedroom >=10 o 9
+bathroom >5 
+living> 5500
+lot> 550000
+view sacarlo del todo
+condicion tambien
+el de grade 1 y capas los grados 3
