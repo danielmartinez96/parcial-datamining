@@ -29,6 +29,7 @@ library("class")
 library("lubridate")
 library("e1071")
 library("psych")
+library("car")
 ```
 
 # Establecimiento del entorno de trabajo
@@ -134,7 +135,7 @@ plot(price~., data=a_raw_data,col="blue")
 ```
 ## Regresion lineal con la raw data
 ```{r Regresion lineal con la raw data}
-modelo_simple <- lm(data = price_sin_outliers,formula = price ~ .)
+modelo_simple <- lm(data = a_raw_data,formula = price ~ . -id )
 summary(modelo_simple)
 ```
 
@@ -329,37 +330,8 @@ cor(zipcodepro[,c("price","zipcode","lat","long")])
 
 
 ```{r Price con bedroom y bathroom }
-plot(price~bedrooms+bathrooms, data=a_raw_data)
-#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
-cor(a_raw_data[,c("price","bedrooms","bathrooms")])
 
 
-par(mfrow = c(1,2))
-boxplot(a_raw_data$bedrooms)
-summary(a_raw_data$bedrooms)
-hist(a_raw_data$bedrooms, breaks = 20)
-
-
-boxplot(a_raw_data$bathrooms)
-summary(a_raw_data$bathrooms)
-hist(a_raw_data$bathrooms,breaks = 20)
-
-plot(bedrooms~bathrooms, data=a_raw_data)
-batBet=a_raw_data
-batBet$bathrooms=as.numeric(batBet$bathrooms)
-batBet= mutate(a_raw_data,banioosCuartos=ifelse(bathrooms>0,(bedrooms/bathrooms),0))
-
-plot(price~banioosCuartos, data=batBet)
-
-batBet=filter(batBet,banioosCuartos<3.18&banioosCuartos>0.3)
-batBet= filter(batBet,price<1010000)
-boxplot(batBet$banioosCuartos)
-boxplot(batBet$price)
-summary(batBet$banioosCuartos)
-hist(batBet$banioosCuartos,breaks = 100)
-
-
-cor(batBet[,c("price","banioosCuartos")])
 ```
 ### Limpieza de datos
 ```{r Limpieza de datos}
@@ -380,6 +352,12 @@ clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw
 
 clean_data= select(clean_data,-sqft_living15,-sqft_lot15,-zipcode)
 
+modelo_clean<-lm(price~.,data=clean_data)
+summary(modelo_clean)
+vif(modelo_clean)
+
+#outliers
+clean_data= filter(clean_data,price<1010000)
 
 modelo_clean<-lm(price~.,data=clean_data)
 summary(modelo_clean)
