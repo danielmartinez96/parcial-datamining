@@ -239,7 +239,7 @@ plot(renovacion$price~renovacion$yr_renovated)
 ```{r Regresion lineal con antiguedad}
 df_antiguedad= a_raw_data
 df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
-df_antiguedad= mutate(df_antiguedad,antiguedad=ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
+df_antiguedad= mutate(df_antiguedad,antiguedad=ifelse(yr_renovated>0,year(date)-yr_renovated,year(date)-yr_built))
 
 
 par(mfrow = c(1,2))
@@ -302,55 +302,140 @@ summary(price_sin_outliers$price)
 
 ```
 
+```{r Precio / metro cuadrado }
+
+precio_lot=mutate(a_raw_data,sqft_price=price/sqft_lot15)
+summary(precio_lot$sqft_price)
+hist(precio_lot$sqft_price)
+boxplot(precio_lot$sqft_price)
+plot(sqft_price~price,data=precio_lot)
 
 
-```{r }
-#a_raw_data=mutate(a_raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
-#a_raw_data=filter(a_raw_data,yr_renovated.nuevo!="quitar")
-#a_raw_data$yr_renovated.nuevo=as.factor(a_raw_data$yr_renovated.nuevo)
+precio_lot2=filter(precio_lot,sqft_price>13)
+precio_lot2=filter(precio_lot2,sqft_price<550)
+precio_lot2=filter(precio_lot2,price<1010000)
+summary(precio_lot2$sqft_price)
+hist(precio_lot2$sqft_price)
+boxplot(precio_lot2$sqft_price)
+plot(price~bedrooms,data=precio_lot2)
+boxplot(precio_lot2$price)
+hist(precio_lot2$price, breaks = 100)
+```
 
 
-#par(mfrow = c(1,2))
-#pie(summary(as.factor(a_raw_data$yr_renovated.nuevo)), labels = c("No_renovado","renovado"), main = "Distribución de 'Renovacion'")
 
-#plot(a_raw_data$price~a_raw_data$yr_renovated.nuevo)
+```{r Bathrooms y bedrooms}
 
-#a_raw_data <- dummy_cols(a_raw_data, select_columns = c("yr_renovated.nuevo"))
-#a_raw_data$yr_renovated.nuevo <- NULL
-#corrplot(cor(a_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")]),method="square")
-#cor(a_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
+
+hist(a_raw_data$bedrooms)
+hist(a_raw_data$bathrooms)
+
+boxplot(a_raw_data$bedrooms)
+boxplot(a_raw_data$bathrooms)
+data_bb=filter(a_raw_data,bedrooms<15)
+data_bb=mutate(data_bb,bedbat=bedrooms/bathrooms)
+hist(data_bb$bedrooms)
+hist(data_bb$bathrooms)
+hist(data_bb$bedbat)
+data_bb=filter(data_bb,bedbat<=3)
+hist(data_bb$bedbat)
+plot(price~bedbat,data=data_bb)
+boxplot(data_bb$bedrooms)
+boxplot(data_bb$bathrooms)
+
+
 ```
 
 
 ```{r Zipcode relacion con lat y long }
-zipcodepro=a_raw_data
+dim15=a_raw_data
 #zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
-cor(zipcodepro[,c("price","zipcode","lat","long")])
+dim15= mutate(dim15,livingdif=sqft_living-sqft_living15)
+
+summary(dim15$livingdif)
+hist(dim15$livingdif)
 ```
 
+```{r view y waterfront }
 
-```{r Price con bedroom y bathroom }
+plot(price~view,data=a_raw_data)
+summary(lm(price~view,data=a_raw_data))
+
+plot(price~waterfront,data=a_raw_data)
+summary(lm(price~waterfront,data=a_raw_data))
+
+summary(lm(price~waterfront+view,data=a_raw_data))
 
 
+```
+
+#Llegue a la conclucion, de que para zipcode en necesario ponerlo como factor y me afecta
+```{r zip code y lat long }
+
+modelo_zipcode= lm(price~zipcode,data=a_raw_data)
+summary(modelo_zipcode)
+
+modelo_latlong= lm(price~as.numeric(long)+as.numeric(lat),data=a_raw_data)
+summary(modelo_latlong)
+
+plot(price~as.numeric(long)+as.numeric(lat),data=a_raw_data)
+
+par(mfrow = c(1,2))
+boxplot(as.numeric(a_raw_data$lat), main="lat")
+boxplot(as.numeric(a_raw_data$long), main="long")
+
+hist(as.numeric(a_raw_data$lat))
+hist(as.numeric(a_raw_data$long))
+data_latlong=a_raw_data
+data_latlong$long=as.numeric(data_latlong$long)
+data_latlong$lat=as.numeric(data_latlong$lat)
+data_latlong=filter(data_latlong,long<(-121.78))
+data_latlong=filter(data_latlong,lat>(47.2))
+boxplot(data_latlong$lat, main="lat")
+boxplot(data_latlong$long, main="long")
+modelo_latlong= lm(price~long+lat,data=data_latlong)
+plot(price~long+lat,data=data_latlong)
+summary(modelo_latlong)
 ```
 ### Limpieza de datos
 ```{r Limpieza de datos}
 
-clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
+clean_data=a_raw_data
+
+#Long Lat
+clean_data$long=as.numeric(clean_data$long)
+clean_data$lat=as.numeric(clean_data$lat)
+
+clean_data=filter(clean_data,long<(-121.6))
+clean_data=filter(clean_data,lat>(47.2))
+
+#Precio/Sqft
+clean_data=filter(clean_data,(price/sqft_lot15)>13)
+clean_data=filter(clean_data,(price/sqft_lot15)<550)
+
+clean_data=filter(clean_data,(bedrooms/bathrooms)<=3)
 
 # Fecha a antiguedad
 clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
 clean_data= mutate(clean_data,antiguedad=ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
 
-clean_data= select(clean_data,-yr_built,-yr_renovated,-date)
+clean_data$zipcode=as.numeric(clean_data$zipcode)
+clean_data$waterfront=as.numeric(clean_data$waterfront)
+var1= clean_data
+
+clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
+clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
+#Dimensiones
+#clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
 
 #Dimensiones
-clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
+#clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
 
-#Dimensiones
-clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
 
-clean_data= select(clean_data,-sqft_living15,-sqft_lot15,-zipcode)
+
+
+
+clean_data= select(clean_data,-sqft_living,-sqft_lot,-view,-waterfront)
 
 modelo_clean<-lm(price~.,data=clean_data)
 summary(modelo_clean)
@@ -363,9 +448,39 @@ modelo_clean<-lm(price~.,data=clean_data)
 summary(modelo_clean)
 vif(modelo_clean)
 
+####
+plot(modelo_clean)
+hist(modelo_clean$residuals,breaks=40)
+
+```
+```{r}
+splitdata<- createDataPartition(y=modelo_clean$price, p=0.7,list=FALSE)
+train_data<-modelo_clean[splitdata,]
+test_data<-modelo_clean[-splitdata,]
+
+lmfist<- train(price~.,data=train_data,method="lm")
+model_test<-data.frame(ubs=test_data$price,pred=predicted_test)
+model_train<-data.frame(obs=test_data$price,pred=predited_test)
+defaultSummary(model_test)
+
 ```
 
 ### DE ACA EN ADELANTE HACER PRUEBAS 
+
+```{r predict}
+
+#data_train_1 <- sample_frac(clean_data, 0.7)
+#prop.table(table(clean_data$left))
+
+# El segundo conjunto es para el testing que consiste en el 30% de las observaciones restantes.
+#data_test_1 <- setdiff(clean_data, data_train_1)
+
+
+#lda.model <- train(left ~., data = data_train_1, method = "lda")
+#lda.predict <- predict(lda.model, data_test_1)
+#confusionMatrix(lda.predict, data_test_1$left)
+
+```
 
 ```{r INICIO DE LAS PRUEBAS}
 #df_aux <- a_raw_data %>% mutate(dif_sqft15 = a_raw_data$sqft_living15 - a_raw_data$sqft_living)
