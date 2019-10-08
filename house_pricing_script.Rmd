@@ -238,6 +238,7 @@ plot(renovacion$price~renovacion$yr_renovated)
 
 ```{r Regresion lineal con antiguedad}
 df_antiguedad= a_raw_data
+
 df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
 df_antiguedad= mutate(df_antiguedad,antiguedad=ifelse(yr_renovated>0,year(date)-yr_renovated,year(date)-yr_built))
 
@@ -320,6 +321,14 @@ boxplot(precio_lot2$sqft_price)
 plot(price~bedrooms,data=precio_lot2)
 boxplot(precio_lot2$price)
 hist(precio_lot2$price, breaks = 100)
+```
+```{r Correlacion}
+correlation<-round(cor(var1[,4:22]),2)
+corAvg<-colMeans (correlation[ , 1:19])
+corAvg<-data.frame(corAvg)
+correlation
+corAvg[order(corAvg$corAvg,decreasing = TRUE),]
+
 ```
 
 
