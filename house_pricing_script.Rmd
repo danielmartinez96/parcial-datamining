@@ -43,26 +43,28 @@ library("mctest") # libreria para calculo de TOF Y VIF
 a_raw_data <- read.csv("house_data.csv")
 ```
 
-# Analisis Exploratorio 
-
-## DataSet
+ 
+# DataSet
 ```{r}
 a_raw_data
 ```
 
-## Estructura del DataSet
+# Estructura del DataSet
 ```{r Estructura del DataSet}
 str(a_raw_data)
 ```
 
-## Descripcion del DataSet
+# Descripcion del DataSet
 ```{r Descripcion del DataSet}
 summary(a_raw_data)
 ```
 
+# Analisis Exploratorio   
 
-
-## Analasis de variables
+## Boxplot Price, Bedrooms y Bathrooms   
+* El atributo Price presenta outliers para valores superiores a 1e^6, donde existen valores extremos superiores a 6e^6.   
+* El atributo bathrooms posee una mediana alrrededor de 4, donde existen valores extremos de 0 y valores superiores a 6.   
+* El atributo bedrooms posee una mediana alrrededor de 3, un un valor extremo superiore a 30.   
 
 ```{r Boxplot price-bedrooms-bathroom}
 par(mfrow = c(1,3))
@@ -71,11 +73,20 @@ boxplot(a_raw_data$bedrooms, main="Cant Bedrooms")
 boxplot(a_raw_data$bathrooms, main="Cant Bathrooms")
 ```
 
+## Boxplot Sqft_living y Sqft_living15   
+
+* El atributo sqft_living presenta una mediana de 2000, y valores atipicos superiores a 3000, se destacan valores extremos superiores a 10000.   
+* El atributo sqft_living15 presenta una mediana alrrededor de 2000, y valores atipicos para valores alrrededor a 4000, los valores outliers se encuentran mas cercanos entre sí que en sqft_living.   
+
 ```{r Boxplot sqft_living-sqft_living15}
 par(mfrow = c(1,2))
 boxplot(a_raw_data$sqft_living, main="sqft_living (ft^2)")
 boxplot(a_raw_data$sqft_living15, main="sqft_living15 (ft^2)")
 ```
+
+## Boxplot Sqft_lot y Sqft_lot15   
+
+* El atributo sqft_lot presenta una mediana alrrededor de cero y outliers para todos los valores superiores, destacando valores extremos superiores a 1000000. Ocurre lo mismo con el atributo sqft_lot15.   
 
 ```{r Boxplot sqft_lot-sqft_lot15}
 par(mfrow = c(1,2))
@@ -83,25 +94,32 @@ boxplot(a_raw_data$sqft_lot, main="sqft_lot (ft^2)")
 boxplot(a_raw_data$sqft_lot15, main="sqft_lot15 (ft^2)")
 ```
 
+## Boxplot Sqft_above y Sqft_basement     
+
+* El atributo sqft_above posee una mediana alrrededor de 2000, y outliers para valores superiores a 4000.   
+* El atributo sqft_basement posee una mediana alrrededor de 0 y valores outliers para valores superiores a 1500.    
+
 ```{r Boxplot sqft_above-sqft_basement}
 par(mfrow = c(1,2))
 boxplot(a_raw_data$sqft_above, main="sqft_above (ft^2)")
 boxplot(a_raw_data$sqft_basement, main="sqft_basement (ft^2)")
 ```
 
-```{r Barplot waterfront, View, Floors}
+## Barplot Waterfront y View   
+
+* Mediante el barplot del atributo Waterfront se observa que la amplia mayoria de instancias no posee waterfront.    
+* Mediante el barplot del atributo view se observa que la mayoria de instancias no fueron visitadas previamente.    
+
+```{r Barplot waterfront, View}
 par(mfrow = c(1,2))
 barplot(table(as.factor(a_raw_data$waterfront)), main="waterfront", col="blue")
 barplot(table(as.factor(a_raw_data$view)), main="view",col="blue")
 ```
 
-```{r Histograma bedrooms, bathrooms, floors}
-par(mfrow = c(1,3))
+## Histograma zipcode, yr_renovated y yr_built
 
-hist(a_raw_data$bedrooms, col="blue" ,breaks= 60, freq = F)
-hist(a_raw_data$bathrooms, col="blue" ,breaks= 60, freq = F)
-hist(a_raw_data$floors, col="blue" ,breaks= 60, freq= F)
-```
+
+* Mediante el histograma del atributo yr_renovated se observa que la mayoria de instancias no fueron renovadas.
 
 ```{r Histograma zipcode, yr_renovated, yr_built}
 par(mfrow = c(1,3))
@@ -111,40 +129,65 @@ hist(a_raw_data$yr_built, col="blue" ,breaks= 60, freq= F)
 ```
 
 
-# Estudio de la variable target: Price
-## Histograma
+# Estudio de la variable target: Price    
+## Histograma    
 
-```{r}
+* Mediante el histograma de la variable objetivo Price se observa que tiene una distribucion similar a la distribucion normal, con un marcado sesgo hacia la derecha.
+
+```{r Histograma Price Raw}
 hist(a_raw_data$price, col="blue", breaks = 60, freq = F)
 lines(density(a_raw_data$price), col = "red", lwd=2)
 rug(a_raw_data$price)
 ```
 
-## Graficos de Dispersion: Price vs Todos
+## Graficos de Dispersion: Price vs Todos    
+
+* Date      vs Price: Debido al formato del atributo Price, el grafico no aporta mucha información.   
+* Bedrooms  vs Price: Aparentemente, la cantidad de bedrooms no tiene relacion directa con el precio.   
+* Bathrooms vs Price: Aparentemente, existe una relacion donde a mayor cantidad de bathrooms mayor es el precio, sin embargo no se repleja en todas las instancias.    
+* Sqft_living vs Price: Aparentemente, existe una relacion donde a mayor sqft_living mayor es el precio, sin embargo el incremento parece poco significativo en el intervalo (0,4000) de sqft_living.    
+* FALTAN LAS DEMAS     
+ 
 ```{r Graficos de Dispersion: Price vs Todos}
 plot(price~., data=a_raw_data,col="blue")
 ```
 
-## Estudio de correlacion
+## Estudio de correlacion   
+
 ```{r Estudio de correlacion}
 corrplot(cor(select(a_raw_data,-c("id","date"))),type="upper", method="pie")
 cor(select(a_raw_data,-c("id","date")))
 ```
 
+* Mediante el diagrama de correlacion sobre el raw_data, existe una fuerte relación entre la variable objetivo price y las variables sqft_living, grade, sqft_above y sqft_living15.   
+
 ```{r Correlacion sobre DataRaw}
 imcdiag(select(a_raw_data, -c("price","date", "id")), a_raw_data$price)
 ```
 
-## Regresion lineal con raw data
+* Se observa que el valor de VIF en relacion con los atributos sqft_living, sqft_above y sqft_basement, es muy elevado, lo cual puede implicar colinealidad.     
+
+# Regresion lineal con raw data 
+
 ```{r Regresion lineal con dataSet sin limpiar}
-lm_sin_limpiar <- lm(data = a_raw_data,formula = price ~ . -id )
+lm_sin_limpiar <- lm(data = a_raw_data,formula = price ~ . -id -date)
 summary(lm_sin_limpiar)
 ```
+
+* Segun el t - value: las variables más relevantes son: bedrooms, bathrooms, grade, sqft_living, waterfront, lat y yr_built.    
+Si bien el R^2 es de 0.70, este modelo esta sujeto posiblemente bajo colinealidad, por lo tanto necesita retrabajo y una seleccion de variables.   
+
+## Residuos: modelo sobre raw data
 
 ```{r Plot de residuos modelo Raw}
 par(mfrow=c(2,2))
 plot(lm_sin_limpiar)
 ```
+
+* Residuals vs Fitted: la recta se adecua al cero, sin embargo existen valores que se encuentran dispersos, muy separados de la recta.    
+* Normal Q-Q: Como los graficos no se adecuan a la recta diagonal, se supone que las instancias no se encuentran normalmente distribuidas.    
+* Scale-Location: La recta no se adecua al cero, es influenciada por una alta concentracion de puntos. Instancias como la 391, que se encuentra en el extremo superior derecho del grafico, influye sobre la grafica.   
+* Residuals vs Leverage: Se puede obervar que existen valores muy cercanos a 0.5, por lo tanto son instancias particulares que tienen influencia significativa sobre el modelo.   
 
 ```{r Plot de residuos 1°: Histograma de Modelo raw}
 residuos = resid(lm_sin_limpiar)
@@ -156,28 +199,22 @@ rug(residuos)
 
 # Analisis de variables
 
-## DUPLICADOS
+## IDs Duplicados
 
-```{r DUPLICADOS}
+```{r Registros de precio id duplicado}
 raw_duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
 dim(raw_duplicadosID)
 ```
 
-```{r}
-#df_sin_repetidos = a_raw_data %>% group_by(id) %>% filter(price==max(price))
+Existen 177 registros con ID repetidos, pero distintos precio y date. Aparentemente son instancias que fueron vendidas nuevamente en el plazo considerado 2014-2015.   
+
+```{r }
+a_raw_data = a_raw_data %>% group_by(id) %>% filter(price==max(price))
 ```
 
+Consideramos las instancias con precio mayor en ese plazo como precio actualizado.    
 
 ## CONDITION & GRADE
-
-197 casos de valores duplicados en ID, fechas con diferencia de un año y un precio que en todos los casos se ingrementó, nos quedamos con el ultimo precio mas actualizado
-
-
-```{r Boxplot GRADE VS CONDITION}
-par(mfrow = c(1,2))
-boxplot(a_raw_data$condition, main="condition")
-boxplot(a_raw_data$grade, main="grade")
-```
 
 ```{r Barplot GRADE VS CONDITION}
 par(mfrow = c(1,2))
@@ -189,19 +226,20 @@ barplot(table(as.factor(a_raw_data$grade)), main="grade")
 corrplot(cor(select(a_raw_data, c("price", "grade", "condition"))),method="square")
 cor(select(a_raw_data, c("price", "grade", "condition")))
 ```
+Mediante este grafico de correlacion se puede observar que existe una fuerte relacion entre PRICE y GRADE, mientras que la relacion con Condition es debil.    
 
-```{r}
-df_condicion <- select(a_raw_data, -c("date", "id", "condition"))
-```
+* Aparentemente Grade y Condition refieren la misma caracteristica de una instancia.    
 
 ```{r Correlacion sobre df sin condicion}
-imcdiag(df_condicion, df_condicion$price)
+imcdiag(select(a_raw_data, -c("date", "id", "condition")), select(a_raw_data, -c("date", "id", "condition"))$price)
 ```
 
-### Regresion lineal con df sin condicion
+Mediante la eliminacion del atributo Condition se redujo el valor de VIF del atributo GRADE.     
+
+### Regresion lineal con df sin condicion     
 
 ```{r Regresion lineal con df sin condicion}
-lm_sin_condicion <- lm(formula = price ~ ., data = df_condicion)
+lm_sin_condicion <- lm(formula = price ~ ., data = select(a_raw_data, -c("date", "id", "condition")))
 summary(lm_sin_condicion)
 ```
 
@@ -218,43 +256,40 @@ lines(density(residuos), col = "red", lwd=2)
 rug(residuos)
 ```
 
-## Renovacion
+## Year_renovated
 
-Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
-
-```{r }
-#Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
+```{r Corplot price, yr_renovated y yr_built}
 corrplot(cor(a_raw_data[,c("price","yr_renovated","yr_built")]),method="square")
 ```
 
-```{r}
-df_renovacion = filter(a_raw_data,yr_renovated>0)
-#observaciones 914
+Aparentemente la variable price tiene poca relacion con los atributos yr_renovated y yr_built.    
+
+```{r Dimension de yr_renovated distintas a cero}
+dim(filter(a_raw_data,yr_renovated>0))
+```
+Existen 911 instancias renovadas.    
+
+```{r Dimension de yr_renovated >= a yr_built}
+dim(filter(a_raw_data,yr_renovated>=yr_built))
 ```
 
-```{r}
-df_renovacion = filter(a_raw_data,yr_renovated>=yr_built)
-#observaciones 914
-#por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
+Existen 911 instancias renovadas. Esto implica que las instacias renovadas no son incoherentes, dado que deben tener una fecha de renovacion superior a la fecha de construccion.      
+
+```{r Boxplot yr_renovated y yr_built}
+par(mfrow = c(1,3))
+boxplot(filter(a_raw_data,yr_renovated>=yr_built)$yr_renovated, main="Renovated")$stats
+boxplot(filter(a_raw_data,yr_renovated>0)$yr_built, main="Built")$stats
+```
+
+```{r Filtro yr_renovated > 1957}
+filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)
 ```
 
 ```{r}
 par(mfrow = c(1,3))
-boxplot(df_renovacion$yr_renovated, main="Renovated")$stats
-boxplot(renovacion$yr_built, main="Built")$stats
-#Built esta bastante bien a mi parecer, luego renovacion tiene muchos outliners
-```
-
-```{r}
-#Nos quito unas observacioens insignificantes asi que podria ser factible este filtro
-renovacion= filter(df_renovacion,yr_renovated>1957)
-```
-
-```{r}
-par(mfrow = c(1,3))
-boxplot(df_renovacion$yr_renovated, main="Renovated Desdepues del filtro")$stats
-summary(df_renovacion$yr_renovated)
-plot(df_renovacion$price ~ df_renovacion$yr_renovated)
+boxplot(filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)$yr_renovated, main="Renovated Desdepues del filtro")$stats
+summary(filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)$yr_renovated)
+plot(filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)$price ~ filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)$yr_renovated)
 ```
 
 ### DATE
