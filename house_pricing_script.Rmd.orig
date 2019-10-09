@@ -1,11 +1,4 @@
 ---
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-author: Alvarez Ignacio Nicolas
->>>>>>> 8bef581... Algo se cambio
-=======
->>>>>>> b453971... asd
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
 
 fig:height: 4
@@ -35,6 +28,12 @@ library("randomForest")
 library("class")
 library("lubridate")
 library("e1071")
+<<<<<<< HEAD
+library("psych")
+library("car")
+library("mctest") # libreria para calculo de TOF Y VIF
+=======
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 ```
 
 # Establecimiento del entorno de trabajo
@@ -47,24 +46,12 @@ library("e1071")
 a_raw_data <- read.csv("house_data.csv")
 ```
 
-
-###Graficos de Dispersión
-```{r }
-
-#plot(price~., data=raw_data,col="blue")
-str(as.factor(raw_data$zipcode))
-
-```
-=======
 # Analisis Exploratorio 
 
-<<<<<<< HEAD
-=======
 ## DataSet
 ```{r}
 a_raw_data
 ```
->>>>>>> edf3f86... se agrego histograma de precios
 
 ## Estructura del DataSet
 ```{r Estructura del DataSet}
@@ -76,6 +63,11 @@ str(a_raw_data)
 summary(a_raw_data)
 ```
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 ## Analasis de variables
 
 ```{r Boxplot price-bedrooms-bathroom}
@@ -103,6 +95,12 @@ boxplot(a_raw_data$sqft_above, main="sqft_above (ft^2)")
 boxplot(a_raw_data$sqft_basement, main="sqft_basement (ft^2)")
 ```
 
+<<<<<<< HEAD
+```{r Barplot waterfront, View, Floors}
+par(mfrow = c(1,2))
+barplot(table(as.factor(a_raw_data$waterfront)), main="waterfront", col="blue")
+barplot(table(as.factor(a_raw_data$view)), main="view",col="blue")
+=======
 ```{r }
 par(mfrow = c(1,3))
 barplot(table(as.factor(a_raw_data$waterfront)), main="waterfront", col="blue")
@@ -129,21 +127,75 @@ plot(price~., data=a_raw_data,col="blue")
 df_sqft = select(a_raw_data,-c("id","date"))
 corrplot(cor(df_sqft),type="upper", method="pie")
 cor(df_sqft)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 ```
 
+```{r Histograma bedrooms, bathrooms, floors}
+par(mfrow = c(1,3))
 
-```{r}
+hist(a_raw_data$bedrooms, col="blue" ,breaks= 60, freq = F)
+hist(a_raw_data$bathrooms, col="blue" ,breaks= 60, freq = F)
+hist(a_raw_data$floors, col="blue" ,breaks= 60, freq= F)
+```
 
+<<<<<<< HEAD
+```{r Histograma zipcode, yr_renovated, yr_built}
+par(mfrow = c(1,3))
+hist(a_raw_data$zipcode, col="blue" ,breaks= 60, freq= F)
+hist(a_raw_data$yr_renovated, col="blue" ,breaks= 60, freq= F)
+hist(a_raw_data$yr_built, col="blue" ,breaks= 60, freq= F)
+```
+
+=======
 prueba = a_raw_data
 
 prueba$sqft_living = a_raw_data$sqft_above / a_raw_data$sqft_living
 prueba$sqft_basement = a_raw_data$sqft_above / a_raw_data$sqft_basement
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 
-head(prueba)
-summary(prueba)
+# Estudio de la variable target: Price
+## Histograma
 
-corrplot(cor(prueba[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
+```{r}
+hist(a_raw_data$price, col="blue", breaks = 60, freq = F)
+lines(density(a_raw_data$price), col = "red", lwd=2)
+rug(a_raw_data$price)
+```
 
+<<<<<<< HEAD
+## Graficos de Dispersion: Price vs Todos
+```{r Graficos de Dispersion: Price vs Todos}
+plot(price~., data=a_raw_data,col="blue")
+```
+
+## Estudio de correlacion
+```{r Estudio de correlacion}
+corrplot(cor(select(a_raw_data,-c("id","date"))),type="upper", method="pie")
+cor(select(a_raw_data,-c("id","date")))
+```
+
+```{r Correlacion sobre DataRaw}
+imcdiag(select(a_raw_data, -c("price","date", "id")), a_raw_data$price)
+```
+
+## Regresion lineal con raw data
+```{r Regresion lineal con dataSet sin limpiar}
+lm_sin_limpiar <- lm(data = a_raw_data,formula = price ~ . -id )
+summary(lm_sin_limpiar)
+```
+
+```{r Plot de residuos modelo Raw}
+par(mfrow=c(2,2))
+plot(lm_sin_limpiar)
+```
+
+```{r Plot de residuos 1°: Histograma de Modelo raw}
+residuos = resid(lm_sin_limpiar)
+hist(residuos, col = "blue", freq = F)
+lines(density(residuos), col = "red", lwd=2)
+rug(residuos)
+```
+=======
 prueba= a_raw_data
 
 prueba = mutate(prueba,sqft_living.nuevo=a_raw_data$sqft_above/a_raw_data$sqft_living)
@@ -158,22 +210,252 @@ prueba = mutate(prueba,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sq
 #prueba$sqft_basement=a_raw_data$sqft_above/a_raw_data$sqft_basement
 head(prueba)
 summary(prueba)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 
-corrplot(cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")]),method="square")
 
-cor(prueba[,c("sqft_living.nuevo","sqft_lot","sqft_above","sqft_living15.nuevo","sqft_lot15.nuevo","sqft_basement.nuevo")])
+# Analisis de variables
 
+<<<<<<< HEAD
+## DUPLICADOS
+=======
 plot(a_raw_data$sqft_living~a_raw_data$sqft_basement)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 
+```{r DUPLICADOS}
+raw_duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
+dim(raw_duplicadosID)
 ```
+
+```{r}
+#df_sin_repetidos = a_raw_data %>% group_by(id) %>% filter(price==max(price))
+```
+
+<<<<<<< HEAD
+=======
+price_con_outliers= filter(a_raw_data,price>1010000)
+price_sin_outliers= filter(a_raw_data,!price>1010000)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+
+## CONDITION & GRADE
+
+197 casos de valores duplicados en ID, fechas con diferencia de un año y un precio que en todos los casos se ingrementó, nos quedamos con el ultimo precio mas actualizado
+
+
+```{r Boxplot GRADE VS CONDITION}
+par(mfrow = c(1,2))
+boxplot(a_raw_data$condition, main="condition")
+boxplot(a_raw_data$grade, main="grade")
+```
+
+```{r Barplot GRADE VS CONDITION}
+par(mfrow = c(1,2))
+barplot(table(as.factor(a_raw_data$condition)), main="condition")
+barplot(table(as.factor(a_raw_data$grade)), main="grade")
+```
+
+```{r Corrplot price, grade, condition}
+corrplot(cor(select(a_raw_data, c("price", "grade", "condition"))),method="square")
+cor(select(a_raw_data, c("price", "grade", "condition")))
+```
+
+<<<<<<< HEAD
+```{r}
+df_condicion <- select(a_raw_data, -c("date", "id", "condition"))
+```
+=======
+```{r Antiguedad }
+df_antiguedad= a_raw_data
+df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
+df_antiguedad= mutate(df_antiguedad,antiguedad=(year(date)-yr_built))
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+
+```{r Correlacion sobre df sin condicion}
+imcdiag(df_condicion, df_condicion$price)
+```
+
+### Regresion lineal con df sin condicion
+
+```{r Regresion lineal con df sin condicion}
+lm_sin_condicion <- lm(formula = price ~ ., data = df_condicion)
+summary(lm_sin_condicion)
+```
+
+<<<<<<< HEAD
+```{r Plot de residuos modelo sin condicion}
+par(mfrow=c(2,2))
+plot(lm_sin_condicion)
+```
+
+```{r Plot de residuos 1°: Histograma de modelo sin condicion}
+=======
+# Analisis de variables
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+
+residuos = resid(lm_sin_condicion)
+hist(residuos, col = "blue", freq = F)
+lines(density(residuos), col = "red", lwd=2)
+rug(residuos)
+```
+
+<<<<<<< HEAD
+## Renovacion
+=======
+```{r}
+duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
+df_sin_repetidos = a_raw_data %>% group_by(id) %>% filter(price==max(price))
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+
+Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
 
 ```{r }
-plot(prueba$price~prueba$sqft_living.nuevo)
+#Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
+corrplot(cor(a_raw_data[,c("price","yr_renovated","yr_built")]),method="square")
 ```
+
+```{r}
+df_renovacion = filter(a_raw_data,yr_renovated>0)
+#observaciones 914
+```
+
+```{r}
+df_renovacion = filter(a_raw_data,yr_renovated>=yr_built)
+#observaciones 914
+#por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
+```
+
+```{r}
+<<<<<<< HEAD
+par(mfrow = c(1,3))
+boxplot(df_renovacion$yr_renovated, main="Renovated")$stats
+boxplot(renovacion$yr_built, main="Built")$stats
+#Built esta bastante bien a mi parecer, luego renovacion tiene muchos outliners
+```
+
+```{r}
+#Nos quito unas observacioens insignificantes asi que podria ser factible este filtro
+renovacion= filter(df_renovacion,yr_renovated>1957)
+=======
+par(mfrow = c(1,2))
+barplot(table(as.factor(df_sin_repetidos$condition)), main="condition")
+barplot(table(as.factor(df_sin_repetidos$grade)), main="grade")
+```
+
+```{r}
+
+df_sqft =  select(df_sin_repetidos, price, grade, condition) %>% select(-c("id"))
+corrplot(cor(df_sqft),method="square")
+cor(df_sqft)
+
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+```
+
+```{r}
+par(mfrow = c(1,3))
+boxplot(df_renovacion$yr_renovated, main="Renovated Desdepues del filtro")$stats
+summary(df_renovacion$yr_renovated)
+plot(df_renovacion$price ~ df_renovacion$yr_renovated)
+```
+
+### DATE
+
+La fecha presenta un formato que es necesario cambiar, se busca ver la relacion entre los distintos año/meses y el precio de las casas
+
+```{r}
+df_fecha_form = a_raw_data %>% select(price,date)  %>% mutate(date_year = paste(year(date), month(date), sep="/"))
+```
+
+```{r}
+pie(table(df_fecha_form$date_year))
+```
+
+Salvo casos particulares parece que la fecha de publicacion supongo, no afecta el precio de una casa.
+```{r Plot Fecha por año/mes vs Price}
+plot(df_fecha_form$price ~ as.factor(df_fecha_form$date_year))
+```
+
+
+```{r}
+df_antiguedad= a_raw_data
+df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
+df_antiguedad= mutate(df_antiguedad,antiguedad= ifelse(yr_renovated>0, 
+                                                      year(date)-yr_renovated,
+                                                      year(date)-yr_built))
+```
+
+```{r}
+par(mfrow = c(1,2))
+boxplot(df_antiguedad$antiguedad)
+summary(df_antiguedad$antiguedad)
+plot(price~antiguedad,data=df_antiguedad)
+```
+
+## Regresion lineal con Atributo Antiguedad
+
+<<<<<<< HEAD
+```{r Regresion lineal con antiguedad}
+modelo_fecha<-lm(price ~ . -yr_renovated -yr_built -date -id, data=df_antiguedad)
+summary(modelo_fecha)
+=======
+```{r}
+prueba2 = mutate(a_raw_data,)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+```
+
+
+```{r Analisis de las dimensiones}
+
+prueba1 = a_raw_data
+corrplot(cor(prueba1[,c("sqft_living","sqft_lot","sqft_above","sqft_living15","sqft_lot15","sqft_basement")]),method="square")
+
+#prueba = mutate(prueba,sqft_living.nuevo=a_raw_data$sqft_above/a_raw_data$sqft_living)
+
+modelo_dim1 <-lm(price~sqft_living+sqft_lot+sqft_above+sqft_living15+sqft_lot15+sqft_basement, data=prueba1)
+summary(modelo_dim1)
+
+#vif(modelo_dim1) Aca no uso esto por que me da error por que dice que hay collinealdiad perfecta que es la de basement y la de above con living
+
+pair1= select(a_raw_data,sqft_living,sqft_lot,sqft_above,sqft_basement)
+pairs(pair1)
+
+
+
+prueba1 = mutate(prueba1,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
+
+prueba1 = mutate(prueba1,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
+
+corrplot(cor(prueba1[,c("sqft_living","sqft_lot","sqft_living15.nuevo","sqft_lot15.nuevo")]),method="square")
+
+modelo_dim2 <-lm(price~sqft_living+sqft_lot+sqft_living15.nuevo+sqft_lot15.nuevo, data=prueba1)
+summary(modelo_dim2)
+
+
+vif(modelo_dim2)
+#Aca podemos ver que no existe colinealidad con los valores y ademas mejora un poco el R2
+```
+
+```{r COLINEALDAD PRUEBA}
+imcdiag(select(prueba1, -c("price","date")), prueba1$price)
+```
+
+<<<<<<< HEAD
+
 ```{r Outliers Price}
 
 price_con_outliers= filter(a_raw_data,price>1010000)
 price_sin_outliers= filter(a_raw_data,!price>1010000)
+=======
+#Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
+```{r }
+#Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
+corrplot(cor(a_raw_data[,c("yr_renovated","yr_built")]),method="square")
+
+renovacion= filter(a_raw_data,yr_renovated>0)
+#observaciones 914
+
+renovacion2= filter(a_raw_data,yr_renovated>=yr_built)
+#observaciones 914
+#por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 
 
 
@@ -186,135 +468,189 @@ summary(price_sin_outliers$price)
 
 ```
 
-```{r Antiguedad }
-df_antiguedad= a_raw_data
-df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
-df_antiguedad= mutate(df_antiguedad,antiguedad=(year(date)-yr_built))
+```{r Precio / metro cuadrado }
+
+precio_lot=mutate(a_raw_data,sqft_price=price/sqft_lot15)
+summary(precio_lot$sqft_price)
+hist(precio_lot$sqft_price)
+boxplot(precio_lot$sqft_price)
+plot(sqft_price~price,data=precio_lot)
 
 
-par(mfrow = c(1,2))
-boxplot(df_antiguedad$antiguedad)
-summary(df_antiguedad$antiguedad)
-plot(price~antiguedad,data=df_antiguedad)
-
-cor(df_antiguedad[,c("price","antiguedad")])
+precio_lot2=filter(precio_lot,sqft_price>13)
+precio_lot2=filter(precio_lot2,sqft_price<550)
+precio_lot2=filter(precio_lot2,price<1010000)
+summary(precio_lot2$sqft_price)
+hist(precio_lot2$sqft_price)
+boxplot(precio_lot2$sqft_price)
+plot(price~bedrooms,data=precio_lot2)
+boxplot(precio_lot2$price)
+hist(precio_lot2$price, breaks = 100)
 ```
+```{r Correlacion}
+#correlation<-round(cor(var1[,4:22]),2)
+#corAvg<-colMeans (correlation[ , 1:19])
+#corAvg<-data.frame(corAvg)
+#correlation
+#corAvg[order(corAvg$corAvg,decreasing = TRUE),]
 
-# Analisis de variables
+imcdiag(select(data_set, -c("Price")), data_set$Price)
 
-### DUPLICADOS
-
-```{r}
-duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
-df_sin_repetidos = a_raw_data %>% group_by(id) %>% filter(price==max(price))
-
-```
-
-### CONDITION & GRADE
-197 casos de valores duplicados en ID, fechas con diferencia de un año y un precio que en todos los casos se ingrementó, nos quedamos con el ultimo precio mas actualizado
-```{r}
-summary(df_sin_repetidos$condition)
-summary(df_sin_repetidos$grade)
-```
-
-```{r}
-par(mfrow = c(1,2))
-boxplot(df_sin_repetidos$condition, main="condition")
-boxplot(df_sin_repetidos$grade, main="grade")
-```
-```{r}
-par(mfrow = c(1,2))
-barplot(table(as.factor(df_sin_repetidos$condition)), main="condition")
-barplot(table(as.factor(df_sin_repetidos$grade)), main="grade")
-```
-
-```{r}
-
-df_sqft =  select(df_sin_repetidos, price, grade, condition) %>% select(-c("id"))
-corrplot(cor(df_sqft),method="square")
-cor(df_sqft)
-
-```
-
-```{r}
-df_sin_condition = select(df_sin_repetidos, -c(condition))
-```
-
-### DATE
-
-La fecha presenta un formato que es necesario cambiar, se busca ver la relacion entre los distintos año/meses y el precio de las casas
-
-```{r}
-df_sin_condition$date =  as.Date(df_sin_condition$date, format = "%Y%m%dT000000")
-
-df_fecha_form = df_sin_condition  %>% mutate(date_year = paste(year(date), month(date), sep="/"))
-```
-
-```{r}
-pie(table(df_fecha_form$date_year))
-```
-
-Salvo casos particulares parece que la fecha de publicacion supongo, no afecta el precio de una casa.
-```{r}
-plot(df_fecha_form$price ~ as.factor(df_fecha_form$date_year))
-```
-
-Se saca el la fecha
-
-```{r}
-df_sin_date = select(df_sin_condition, -c(date))
-```
-
-
-```{r}
-prueba2 = mutate(a_raw_data,)
 ```
 
 
 
-```{r }
-plot(prueba$price~prueba$sqft_living.nuevo)
+```{r Bathrooms y bedrooms}
+
+
+hist(a_raw_data$bedrooms)
+hist(a_raw_data$bathrooms)
+
+boxplot(a_raw_data$bedrooms)
+boxplot(a_raw_data$bathrooms)
+data_bb=filter(a_raw_data,bedrooms<15)
+data_bb=mutate(data_bb,bedbat=bedrooms/bathrooms)
+hist(data_bb$bedrooms)
+hist(data_bb$bathrooms)
+hist(data_bb$bedbat)
+data_bb=filter(data_bb,bedbat<=3)
+hist(data_bb$bedbat)
+plot(price~bedbat,data=data_bb)
+boxplot(data_bb$bedrooms)
+boxplot(data_bb$bathrooms)
+
+
 ```
 
-
-#Analisis de los datos de la renovacion para ver el rango de valores que abarca sin utilizar las que tienen cero, quiero ver si se podria discretisarlos y expresarla como factor en "No renovada", "1991","1992", etc.
-```{r }
-#Aca voy a relacionar el año de renovacion y de construccion para ver la correlacion
-corrplot(cor(a_raw_data[,c("yr_renovated","yr_built")]),method="square")
-
-renovacion= filter(a_raw_data,yr_renovated>0)
-#observaciones 914
-
-renovacion2= filter(a_raw_data,yr_renovated>=yr_built)
-#observaciones 914
-#por lo tanto los datos de yr renovacion y built tienen sentido por que las que tienen renovacion son posteriores a los de construccion
-
-
-par(mfrow = c(1,3))
-boxplot(renovacion$yr_renovated, main="Renovated")$stats
-boxplot(renovacion$yr_built, main="Built")$stats
-#Built esta bastante bien a mi parecer, luego renovacion tiene muchos outliners
-
-renovacion= filter(renovacion,yr_renovated>1957)
-#Nos quito unas observacioens insignificantes asi que podria ser factible este filtro
-
-par(mfrow = c(1,3))
-
-boxplot(renovacion$yr_renovated, main="Renovated Desdepues del filtro")$stats
-
-summary(renovacion$yr_renovated)
-
-plot(renovacion$price~renovacion$yr_renovated)
-```
-
-
-
+<<<<<<< HEAD
+=======
 ```{r }
 #a_raw_data=mutate(a_raw_data, yr_renovated.nuevo=ifelse(yr_renovated==0,"NoRenovado",ifelse(yr_renovated>1957,"renovado","quitar")))
 #a_raw_data=filter(a_raw_data,yr_renovated.nuevo!="quitar")
 #a_raw_data$yr_renovated.nuevo=as.factor(a_raw_data$yr_renovated.nuevo)
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
+
+```{r Zipcode relacion con lat y long }
+dim15=a_raw_data
+#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
+dim15= mutate(dim15,livingdif=sqft_living-sqft_living15)
+
+summary(dim15$livingdif)
+hist(dim15$livingdif)
+```
+
+```{r view y waterfront }
+
+plot(price~view,data=a_raw_data)
+summary(lm(price~view,data=a_raw_data))
+
+plot(price~waterfront,data=a_raw_data)
+summary(lm(price~waterfront,data=a_raw_data))
+
+summary(lm(price~waterfront+view,data=a_raw_data))
 
 
+```
+
+#Llegue a la conclucion, de que para zipcode en necesario ponerlo como factor y me afecta
+```{r zip code y lat long }
+
+modelo_zipcode= lm(price~zipcode,data=a_raw_data)
+summary(modelo_zipcode)
+
+modelo_latlong= lm(price~as.numeric(long)+as.numeric(lat),data=a_raw_data)
+summary(modelo_latlong)
+
+plot(price~as.numeric(long)+as.numeric(lat),data=a_raw_data)
+
+<<<<<<< HEAD
+par(mfrow = c(1,2))
+boxplot(as.numeric(a_raw_data$lat), main="lat")
+boxplot(as.numeric(a_raw_data$long), main="long")
+
+hist(as.numeric(a_raw_data$lat))
+hist(as.numeric(a_raw_data$long))
+data_latlong=a_raw_data
+data_latlong$long=as.numeric(data_latlong$long)
+data_latlong$lat=as.numeric(data_latlong$lat)
+data_latlong=filter(data_latlong,long<(-121.78))
+data_latlong=filter(data_latlong,lat>(47.2))
+boxplot(data_latlong$lat, main="lat")
+boxplot(data_latlong$long, main="long")
+modelo_latlong= lm(price~long+lat,data=data_latlong)
+plot(price~long+lat,data=data_latlong)
+summary(modelo_latlong)
+```
+### Limpieza de datos
+```{r Limpieza de datos}
+
+clean_data=a_raw_data
+
+#Long Lat
+clean_data$long=as.numeric(clean_data$long)
+clean_data$lat=as.numeric(clean_data$lat)
+
+clean_data=filter(clean_data,long<(-121.6))
+clean_data=filter(clean_data,lat>(47.2))
+
+#Precio/Sqft
+clean_data=filter(clean_data,(price/sqft_lot15)>13)
+clean_data=filter(clean_data,(price/sqft_lot15)<550)
+
+clean_data=filter(clean_data,(bedrooms/bathrooms)<=3)
+
+# Fecha a antiguedad
+clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
+clean_data= mutate(clean_data,antiguedad=ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
+
+clean_data$zipcode=as.numeric(clean_data$zipcode)
+clean_data$waterfront=as.numeric(clean_data$waterfront)
+var1= clean_data
+
+clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
+clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
+#Dimensiones
+#clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
+
+#Dimensiones
+#clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
+
+
+
+
+
+clean_data= select(clean_data,-sqft_living,-sqft_lot,-view,-waterfront)
+
+modelo_clean<-lm(price~.,data=clean_data)
+summary(modelo_clean)
+vif(modelo_clean)
+
+#outliers
+clean_data= filter(clean_data,price<1010000)
+
+modelo_clean<-lm(price~.,data=clean_data)
+summary(modelo_clean)
+vif(modelo_clean)
+
+####
+plot(modelo_clean)
+hist(modelo_clean$residuals,breaks=40)
+
+```
+```{r}
+splitdata<- createDataPartition(y=modelo_clean$price, p=0.70,list=FALSE)
+train_data<-modelo_clean[splitdata,]
+test_data<-modelo_clean[-splitdata,]
+
+lmfist<- train(price~.,data=train_data,method="lm")
+model_test<-data.frame(ubs=test_data$price,pred=predicted_test)
+model_train<-data.frame(obs=test_data$price,pred=predited_test)
+defaultSummary(model_test)
+
+```
+```{r}
+imcdiag(select(clean_data, -c("price","date")), clean_data$price)
+=======
 #par(mfrow = c(1,2))
 #pie(summary(as.factor(a_raw_data$yr_renovated.nuevo)), labels = c("No_renovado","renovado"), main = "Distribución de 'Renovacion'")
 
@@ -326,58 +662,6 @@ plot(renovacion$price~renovacion$yr_renovated)
 #cor(a_raw_data[,c("yr_renovated.nuevo_renovado","yr_renovated.nuevo_NoRenovado","price")])
 ```
 
-<<<<<<< HEAD
-```{r Zipcode relacion con lat y long }
-zipcodepro=raw_data
-#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
-cor(zipcodepro[,c("price","zipcode","lat","long")])
-```
-
-
-```{r Price con bedroom y bathroom }
-plot(price~bedrooms+bathrooms, data=raw_data)
-#zipcodepro$zipcode=as.factor(zipcodepro$zipcode)
-cor(raw_data[,c("price","bedrooms","bathrooms")])
-
-
-par(mfrow = c(1,2))
-boxplot(raw_data$bedrooms)
-summary(raw_data$bedrooms)
-hist(raw_data$bedrooms, breaks = 20)
-
-
-boxplot(raw_data$bathrooms)
-summary(raw_data$bathrooms)
-hist(raw_data$bathrooms,breaks = 20)
-
-plot(bedrooms~bathrooms, data=raw_data)
-batBet=raw_data
-batBet$bathrooms=as.numeric(batBet$bathrooms)
-batBet= mutate(raw_data,bañosCuartos=ifelse(bathrooms>0,(bedrooms/bathrooms),0))
-
-plot(price~bañosCuartos, data=batBet)
-
-batBet=filter(batBet,bañosCuartos<3.18&bañosCuartos>0.3)
-batBet= filter(batBet,price<1010000)
-boxplot(batBet$bañosCuartos)
-boxplot(batBet$price)
-summary(batBet$bañosCuartos)
-hist(batBet$bañosCuartos,breaks = 100)
-
-
-cor(batBet[,c("price","bañosCuartos")])
-```
-=======
-<<<<<<< HEAD
-### TIPS
-<<<<<<< HEAD
-* 
->>>>>>> 8bef581... Algo se cambio
-=======
->>>>>>> b453971... asd
-=======
-=======
->>>>>>> ba39f1e... asd
 ### DE ACA EN ADELANTE HACER PRUEBAS 
 
 ```{r INICIO DE LAS PRUEBAS}
@@ -390,8 +674,8 @@ cor(batBet[,c("price","bañosCuartos")])
 #ABOVE + BASEMENT = LIVING
 
 #corrplot(cor(select(a_raw_data,-c("id","date", "sqft_living", "sqft_lot", "sqft_above", "sqft_basement"))),type="upper", method="pie")
+>>>>>>> ba39f1e6e10e62004e2e7794825a99e6b51c7ca1
 
 ```
 
 
->>>>>>> 28f9f2e... asdasd
