@@ -66,11 +66,11 @@ summary(a_raw_data)
 * El atributo bathrooms posee una mediana alrrededor de 4, donde existen valores extremos de 0 y valores superiores a 6.   
 * El atributo bedrooms posee una mediana alrrededor de 3, un un valor extremo superiore a 30.   
 
-```{r Boxplot price-bedrooms-bathroom}
+```{r Plot price-bedrooms-bathroom}
 par(mfrow = c(1,3))
 boxplot(a_raw_data$price, main="Price")
-boxplot(a_raw_data$bedrooms, main="Cant Bedrooms")
-boxplot(a_raw_data$bathrooms, main="Cant Bathrooms")
+barplot(table(as.factor(a_raw_data$bedrooms)), main="Cant Bedrooms")
+barplot(table(as.factor(a_raw_data$bathrooms)), main="Cant Bathrooms")
 ```
 
 ## Boxplot Sqft_living y Sqft_living15   
@@ -101,8 +101,8 @@ boxplot(a_raw_data$sqft_lot15, main="sqft_lot15 (ft^2)")
 
 ```{r Boxplot sqft_above-sqft_basement}
 par(mfrow = c(1,2))
-boxplot(a_raw_data$sqft_above, main="sqft_above (ft^2)")
-boxplot(a_raw_data$sqft_basement, main="sqft_basement (ft^2)")
+hist(a_raw_data$sqft_above, main="sqft_above (ft^2)", breaks = 40)
+hist(a_raw_data$sqft_basement, main="sqft_basement (ft^2)" , breaks = 40)
 ```
 
 ## Barplot Waterfront y View   
@@ -269,7 +269,7 @@ dim(filter(a_raw_data,yr_renovated>0))
 ```
 Existen 911 instancias renovadas.    
 
-```{r Dimension de yr_renovated >= a yr_built}
+```{r Dimension de yr_renovated vs a yr_built}
 dim(filter(a_raw_data,yr_renovated>=yr_built))
 ```
 
@@ -297,6 +297,7 @@ plot(filter(filter(a_raw_data,yr_renovated>=yr_built), yr_renovated>1957)$price 
 La fecha presenta un formato que es necesario cambiar, se busca ver la relacion entre los distintos año/meses y el precio de las casas
 
 ```{r}
+a_raw_data$date =  as.Date(a_raw_data$date, format = "%Y%m%dT000000")
 df_fecha_form = a_raw_data %>% select(price,date)  %>% mutate(date_year = paste(year(date), month(date), sep="/"))
 ```
 
@@ -312,7 +313,6 @@ plot(df_fecha_form$price ~ as.factor(df_fecha_form$date_year))
 
 ```{r}
 df_antiguedad= a_raw_data
-df_antiguedad$date =  as.Date(df_antiguedad$date, format = "%Y%m%dT000000")
 df_antiguedad= mutate(df_antiguedad,antiguedad= ifelse(yr_renovated>0, 
                                                       year(date)-yr_renovated,
                                                       year(date)-yr_built))
@@ -350,17 +350,17 @@ pairs(pair1)
 
 
 
-prueba1 = mutate(prueba1,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
+#prueba1 = mutate(prueba1,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
 
-prueba1 = mutate(prueba1,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
+#prueba1 = mutate(prueba1,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
 
-corrplot(cor(prueba1[,c("sqft_living","sqft_lot","sqft_living15.nuevo","sqft_lot15.nuevo")]),method="square")
+#corrplot(cor(prueba1[,c("sqft_living","sqft_lot","sqft_living15.nuevo","sqft_lot15.nuevo")]),method="square")
 
-modelo_dim2 <-lm(price~sqft_living+sqft_lot+sqft_living15.nuevo+sqft_lot15.nuevo, data=prueba1)
-summary(modelo_dim2)
+#modelo_dim2 <-lm(price~sqft_living+sqft_lot+sqft_living15.nuevo+sqft_lot15.nuevo, data=prueba1)
+#summary(modelo_dim2)
 
 
-vif(modelo_dim2)
+#vif(modelo_dim2)
 #Aca podemos ver que no existe colinealidad con los valores y ademas mejora un poco el R2
 ```
 
@@ -374,15 +374,11 @@ imcdiag(select(prueba1, -c("price","date")), prueba1$price)
 price_con_outliers= filter(a_raw_data,price>1010000)
 price_sin_outliers= filter(a_raw_data,!price>1010000)
 
-
-
 par(mfrow = c(1,2))
 boxplot(price_con_outliers$price, main="con outliers")
 boxplot(price_sin_outliers$price, main="sin outliers")
 hist(price_sin_outliers$price, breaks = 100)
 summary(price_sin_outliers$price)
-
-
 ```
 
 ```{r Precio / metro cuadrado }
@@ -393,34 +389,33 @@ hist(precio_lot$sqft_price)
 boxplot(precio_lot$sqft_price)
 plot(sqft_price~price,data=precio_lot)
 
-
 precio_lot2=filter(precio_lot,sqft_price>13)
 precio_lot2=filter(precio_lot2,sqft_price<550)
 precio_lot2=filter(precio_lot2,price<1010000)
+
 summary(precio_lot2$sqft_price)
 hist(precio_lot2$sqft_price)
+
 boxplot(precio_lot2$sqft_price)
 plot(price~bedrooms,data=precio_lot2)
+
 boxplot(precio_lot2$price)
 hist(precio_lot2$price, breaks = 100)
 ```
+
+
 ```{r Correlacion}
-<<<<<<< HEAD
 #correlation<-round(cor(var1[,4:22]),2)
 #corAvg<-colMeans (correlation[ , 1:19])
 #corAvg<-data.frame(corAvg)
 #correlation
 #corAvg[order(corAvg$corAvg,decreasing = TRUE),]
 
-imcdiag(select(data_set, -c("Price")), data_set$Price)
-=======
-correlation<-round(cor(var1[,4:22]),2)
-corAvg<-colMeans (correlation[ , 1:19])
-corAvg
+#imcdiag(select(data_set, -c("Price")), data_set$Price)
 
-
-
->>>>>>> nuevaDaniel
+#correlation<-round(cor(var1[,4:22]),2)
+#corAvg<-colMeans (correlation[ , 1:19])
+#corAvg
 
 ```
 
@@ -464,8 +459,6 @@ plot(price~waterfront,data=a_raw_data)
 summary(lm(price~waterfront,data=a_raw_data))
 
 summary(lm(price~waterfront+view,data=a_raw_data))
-
-
 ```
 
 #Llegue a la conclucion, de que para zipcode en necesario ponerlo como factor y me afecta
@@ -499,31 +492,18 @@ summary(modelo_latlong)
 ### Limpieza de datos
 ```{r Limpieza de datos}
 
-clean_data=a_raw_data
-
-#Long Lat
-clean_data$long=as.numeric(clean_data$long)
-clean_data$lat=as.numeric(clean_data$lat)
-
-clean_data=filter(clean_data,long<(-121.6))
-clean_data=filter(clean_data,lat>(47.2))
+clean_data= select(a_raw_data, -c("long","lat","id"))
 
 #Precio/Sqft
-clean_data=filter(clean_data,(price/sqft_lot15)>13)
-clean_data=filter(clean_data,(price/sqft_lot15)<550)
-
-clean_data=filter(clean_data,(bedrooms/bathrooms)<=3)
+#clean_data=filter(clean_data,(price/sqft_lot15)>13)
+#clean_data=filter(clean_data,(price/sqft_lot15)<550)
 
 # Fecha a antiguedad
 clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
-clean_data= mutate(clean_data,antiguedad=ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
+clean_data= mutate(clean_data,antiguedad = ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
 
-clean_data$zipcode=as.numeric(clean_data$zipcode)
-clean_data$waterfront=as.numeric(clean_data$waterfront)
-var1= clean_data
-
-clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
-clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
+#clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
+#clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
 #Dimensiones
 #clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
 
@@ -531,19 +511,21 @@ clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
 #clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
 
 
-
-
-
-clean_data= select(clean_data,-sqft_living,-sqft_lot,-view,-waterfront)
-
-modelo_clean<-lm(price~.,data=clean_data)
-summary(modelo_clean)
-vif(modelo_clean)
+clean_data= select(clean_data,-sqft_living,-sqft_lot, -date, -id, -sqft_above, -sqft_basement
+                   ,-yr_built, -sqft_lot15, -waterfront)
 
 #outliers
-clean_data= filter(clean_data,price<1010000)
 
-modelo_clean<-lm(price~.,data=clean_data)
+clean_data= filter(clean_data,sqft_living15 > 1000 & sqft_living15 < 3500)
+clean_data= filter(clean_data,price > 100000 & price < 1000000 )
+clean_data= filter(clean_data, bedrooms >= bathrooms )
+
+clean_data = mutate(clean_data, bedrooms = ceiling(bedrooms))
+clean_data = mutate(clean_data, bathrooms = ceiling(bathrooms))
+clean_data = mutate(clean_data, floors = ceiling(floors))
+clean_data = mutate(clean_data, fue_renovada = ifelse(yr_renovated>0, 1 , 0))
+
+modelo_clean<-lm(price~.,data=select(clean_data, -c("id", "bedrooms", "yr_renovated", "zipcode")))
 summary(modelo_clean)
 vif(modelo_clean)
 
@@ -552,20 +534,39 @@ plot(modelo_clean)
 hist(modelo_clean$residuals,breaks=40)
 
 ```
+
+
+```{r}
+as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% select(-c("id","grade","zipcode"))
+modelo_clean_1<-lm(price~ .,data= as)
+summary(modelo_clean_1)
+plot(modelo_clean_1)
+hist(modelo_clean_1$residuals)
+```
+
+```{r}
+as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% select(-c("id","grade", "lat", "long", "sqft_lot15")) 
+modelo_clean_1<-lm(price~ .,data= as)
+summary(modelo_clean_1)
+plot(modelo_clean_1)
+hist(modelo_clean_1$residuals)
+```
+
+
 ```{r}
 splitdata<- createDataPartition(y=modelo_clean$price, p=0.70,list=FALSE)
 train_data<-modelo_clean[splitdata,]
 test_data<-modelo_clean[-splitdata,]
 
-lmfist<- train(price~.,data=train_data,method="lm")
+lmfist<- train(price~. ,data=train_data,method="lm")
 model_test<-data.frame(ubs=test_data$price,pred=predicted_test)
 model_train<-data.frame(obs=test_data$price,pred=predited_test)
 defaultSummary(model_test)
-
 ```
+
+
 ```{r}
 imcdiag(select(clean_data, -c("price","date")), clean_data$price)
-
 ```
 
 
