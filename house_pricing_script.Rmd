@@ -385,17 +385,13 @@ imcdiag(select(data_set, -c("Price")), data_set$Price)
 ```{r Bathrooms y bedrooms}
 
 
-
-boxplot(a_raw_data$bedrooms)
-boxplot(a_raw_data$bathrooms)
 data_bb=filter(a_raw_data,bedrooms<15)
 data_bb=mutate(data_bb,bedbat=ifelse(bedrooms>0,bathrooms/bedrooms,bathrooms))
-data_bb=filter(data_bb,bedbat>0)
-data_bb=filter(data_bb,bedbat<2)
-hist(data_bb$bedrooms)
-hist(data_bb$bathrooms)
+plot(price~bedbat,data=data_bb)
 hist(data_bb$bedbat,breaks=30)
-
+data_bb=filter(data_bb,bedbat>0)
+data_bb=filter(data_bb,bedbat<=2)
+hist(data_bb$bedbat,breaks=30)
 boxplot(data_bb$bedbat)
 plot(price~bedbat,data=data_bb)
 summary(lm(price~bedbat,data=data_bb))
