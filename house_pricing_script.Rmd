@@ -405,6 +405,7 @@ boxplot(precio_lot2$price)
 hist(precio_lot2$price, breaks = 100)
 ```
 ```{r Correlacion}
+<<<<<<< HEAD
 #correlation<-round(cor(var1[,4:22]),2)
 #corAvg<-colMeans (correlation[ , 1:19])
 #corAvg<-data.frame(corAvg)
@@ -412,6 +413,14 @@ hist(precio_lot2$price, breaks = 100)
 #corAvg[order(corAvg$corAvg,decreasing = TRUE),]
 
 imcdiag(select(data_set, -c("Price")), data_set$Price)
+=======
+correlation<-round(cor(var1[,4:22]),2)
+corAvg<-colMeans (correlation[ , 1:19])
+corAvg
+
+
+
+>>>>>>> nuevaDaniel
 
 ```
 
