@@ -1,18 +1,17 @@
 ---
 title: "Analisis exploratorio de dataSet 'House-Pricing'"
-
 fig:height: 4
 output:
+  html_document:
+    
+    df_print: paged
+    toc: yes
   html_notebook:
     df_print: paged
     fig:height: 4
     fig:width: 6
     toc: yes
     toc_float: yes
-  html_document:
-    df_print: paged
-    toc: yes
-    
 author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinez"
 ---
 
@@ -538,61 +537,7 @@ summary(lm(price~waterfront+view,data=a_raw_data))
 # 7 Modelo
 
 
-### modelo ignacio
-```{r Limpieza de datos}
-
-clean_data= select(a_raw_data, -c("long","lat","id"))
-
-#Precio/Sqft
-#clean_data=filter(clean_data,(price/sqft_lot15)>13)
-#clean_data=filter(clean_data,(price/sqft_lot15)<550)
-
-# Fecha a antiguedad
-clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
-clean_data= mutate(clean_data,antiguedad = ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
-
-#clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
-#clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
-#Dimensiones
-#clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
-
-#Dimensiones
-#clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
-
-
-clean_data= select(clean_data,-sqft_living,-sqft_lot, -date, -id, -sqft_above, -sqft_basement
-                   ,-yr_built, -sqft_lot15, -waterfront)
-
-#outliers
-
-clean_data= filter(clean_data,sqft_living15 > 1000 & sqft_living15 < 3500)
-clean_data= filter(clean_data,price > 100000 & price < 1000000 )
-clean_data= filter(clean_data, bedrooms >= bathrooms )
-
-clean_data = mutate(clean_data, bedrooms = ceiling(bedrooms))
-clean_data = mutate(clean_data, bathrooms = ceiling(bathrooms))
-clean_data = mutate(clean_data, floors = ceiling(floors))
-clean_data = mutate(clean_data, fue_renovada = ifelse(yr_renovated>0, 1 , 0))
-
-modelo_clean<-lm(price~.,data=select(clean_data, -c("id", "bedrooms", "yr_renovated", "zipcode")))
-summary(modelo_clean)
-vif(modelo_clean)
-
-####
-plot(modelo_clean)
-hist(modelo_clean$residuals,breaks=40)
-
-```
-
-
-```{r}
-as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% select(-c("id","grade","zipcode"))
-modelo_clean_1<-lm(price~ .,data= as)
-summary(modelo_clean_1)
-plot(modelo_clean_1)
-hist(modelo_clean_1$residuals)
-```
-## 7.1 Modelo Daniel
+## 7.1 Modelo 1
 ### 1 Limpieza Modelo Daniel
 ```{r  Modelo Daniel}
 
@@ -728,8 +673,19 @@ plot(modelo_clean)
 hist(modelo_clean$residuals,breaks=40)
 
 ```
+```{r}
+modelo_clean1 <- lm(formula = log(price) ~ . , data =clean_data2 )
 
 
+summary(modelo_clean1)
+vif(modelo_clean1)
+
+####
+plot(modelo_clean1)
+hist(modelo_clean1$residuals,breaks=40)
+```
+
+### 4 Predict
 ```{r}
 predicciones <- predict(object = modelo_clean, newdata = clean_data2, interval = "confidence", level = 0.95)
 predicciones2 <- predicciones <- predict(object = modelo_clean, newdata = clean_data2, interval = "predict", level = 0.95)
