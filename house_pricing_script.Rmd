@@ -535,10 +535,10 @@ summary(lm(price~waterfront+view,data=a_raw_data))
 
 
 
-# 7 Regresiones lineales
+# 7 Modelo
 
 
-##  Modelo
+### modelo ignacio
 ```{r Limpieza de datos}
 
 clean_data= select(a_raw_data, -c("long","lat","id"))
@@ -592,8 +592,8 @@ summary(modelo_clean_1)
 plot(modelo_clean_1)
 hist(modelo_clean_1$residuals)
 ```
-
 ## 7.1 Modelo Daniel
+### 1 Limpieza Modelo Daniel
 ```{r  Modelo Daniel}
 
 clean_data= a_raw_data
@@ -604,8 +604,8 @@ clean_data=filter(clean_data,(sqft_living15/1000)<=4)
 clean_data=filter(clean_data,(sqft_lot15/1000)<=100)
 
 #Precio/Sqft
-clean_data=filter(clean_data,price/living15>13)
-clean_data=filter(clean_data,price/living15<500)
+clean_data=filter(clean_data,price/sqft_living15>13)
+clean_data=filter(clean_data,price/sqft_living15<500)
 clean_data=filter(clean_data,price<1000000)
 
 
@@ -615,35 +615,111 @@ clean_data=filter(clean_data,bedrooms<15)
 clean_data=filter(clean_data,bedbat>0)
 clean_data=filter(clean_data,bedbat<=2)
 
+#zip code lat y long
+data_latlong$long=as.numeric(data_latlong$long)
+data_latlong$lat=as.numeric(data_latlong$lat)
+data_latlong=filter(data_latlong,long<(-121.78))
+data_latlong=filter(data_latlong,lat>(47.2))
 
 # Fecha a antiguedad
 clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
 clean_data= mutate(clean_data,antiguedad = ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
 
-#clean_data= select(clean_data,-yr_built,-yr_renovated,-date,-zipcode)
-#clean_data= select(a_raw_data,-id,-condition,-sqft_basement,-sqft_above)
-#Dimensiones
-#clean_data = mutate(clean_data,sqft_lot15.nuevo=(a_raw_data$sqft_lot-a_raw_data$sqft_lot15)/a_raw_data$sqft_lot)
-
-#Dimensiones
-#clean_data = mutate(clean_data,sqft_living15.nuevo=(a_raw_data$sqft_living-a_raw_data$sqft_living15)/a_raw_data$sqft_living)
+#clean_data$price=clean_data$price/mean(clean_data$price)
 
 
-clean_data= select(clean_data,-sqft_living,-sqft_lot, -date, -id, -sqft_above, -sqft_basement
-                   ,-yr_built, -sqft_lot15, -waterfront)
 
-#outliers
+```
 
-clean_data= filter(clean_data,sqft_living15 > 1000 & sqft_living15 < 3500)
-clean_data= filter(clean_data,price > 100000 & price < 1000000 )
-clean_data= filter(clean_data, bedrooms >= bathrooms )
+### 2 Regresiones lineales
 
-clean_data = mutate(clean_data, bedrooms = ceiling(bedrooms))
-clean_data = mutate(clean_data, bathrooms = ceiling(bathrooms))
-clean_data = mutate(clean_data, floors = ceiling(floors))
-clean_data = mutate(clean_data, fue_renovada = ifelse(yr_renovated>0, 1 , 0))
+```{r Regresiones de price contra todos}
+summary(lm(price~bedrooms,data=clean_data))
+```
+```{r }
+summary(lm(price~bathrooms,data=clean_data))
+```
+```{r }
+summary(lm(price~bedbat,data=clean_data))
+```
 
-modelo_clean<-lm(price~.,data=select(clean_data, -c("id", "bedrooms", "yr_renovated", "zipcode")))
+
+```{r }
+summary(lm(price~sqft_living,data=clean_data))
+```
+
+```{r }
+summary(lm(price~sqft_lot,data=clean_data))
+```
+
+```{r }
+summary(lm(price~floors,data=clean_data))
+```
+
+```{r }
+summary(lm(price~waterfront,data=clean_data))
+```
+
+```{r }
+summary(lm(price~view,data=clean_data))
+```
+
+```{r }
+summary(lm(price~condition,data=clean_data))
+```
+
+```{r }
+summary(lm(price~grade,data=clean_data))
+```
+
+```{r }
+summary(lm(price~sqft_above,data=clean_data))
+```
+
+```{r }
+summary(lm(price~sqft_basement,data=clean_data))
+```
+
+```{r }
+summary(lm(price~yr_built,data=clean_data))
+```
+
+```{r }
+summary(lm(price~yr_renovated,data=clean_data))
+```
+
+```{r }
+summary(lm(price~zipcode,data=clean_data))
+```
+
+```{r }
+summary(lm(price~lat,data=clean_data))
+```
+
+```{r }
+summary(lm(price~long,data=clean_data))
+```
+
+```{r }
+summary(lm(price~sqft_living15,data=clean_data))
+```
+
+
+```{r }
+summary(lm(price~sqft_lot15,data=clean_data))
+```
+
+
+```{r }
+summary(lm(price~antiguedad,data=clean_data))
+```
+
+### 3 Regresion final
+```{r regresion final}
+clean_data2= select(clean_data,-c("id","date","condition","sqft_basement","sqft_above","bedbat","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront"))
+modelo_clean <- lm(formula = price ~ . , data =clean_data2 )
+
+
 summary(modelo_clean)
 vif(modelo_clean)
 
@@ -651,99 +727,17 @@ vif(modelo_clean)
 plot(modelo_clean)
 hist(modelo_clean$residuals,breaks=40)
 
-
-
 ```
 
-## 7.2 Regresiones lineales
 
-```{r Regresiones de price contra todos}
-summary(lm(price~bedrooms,data=modelo_clean))
-```
-```{r }
-summary(lm(price~bathrooms,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~sqft_living,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~sqft_lot,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~floors,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~waterfront,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~view,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~condition,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~grade,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~sqft_above,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~sqft_basement,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~yr_built,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~yr_renovated,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~zipcode,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~lat,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~long,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~sqft_living15,data=modelo_clean))
-```
 
 
 ```{r }
-summary(lm(price~sqft_lot15,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~bedbat,data=modelo_clean))
-```
-
-```{r }
-summary(lm(price~antiguedad,data=modelo_clean))
-```
-
-sqft_lot15
-```{r }
-as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% select(-c("id","grade", "lat", "long", "sqft_lot15")) 
-modelo_clean_1<-lm(price~ .,data= as)
-summary(modelo_clean_1)
-plot(modelo_clean_1)
-hist(modelo_clean_1$residuals)
+#as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% #select(-c("id","grade", "lat", "long", "sqft_lot15")) 
+#modelo_clean_1<-lm(price~ .,data= as)
+#summary(modelo_clean_1)
+#plot(modelo_clean_1)
+#hist(modelo_clean_1$residuals)
 ```
 
 
