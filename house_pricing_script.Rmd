@@ -730,31 +730,17 @@ hist(modelo_clean$residuals,breaks=40)
 ```
 
 
-
-
-```{r }
-#as <- clean_data %>% mutate(asd = sqft_living15 / floors) %>% #select(-c("id","grade", "lat", "long", "sqft_lot15")) 
-#modelo_clean_1<-lm(price~ .,data= as)
-#summary(modelo_clean_1)
-#plot(modelo_clean_1)
-#hist(modelo_clean_1$residuals)
-```
-
-
 ```{r}
-splitdata<- createDataPartition(y=modelo_clean$price, p=0.70,list=FALSE)
-train_data<-modelo_clean[splitdata,]
-test_data<-modelo_clean[-splitdata,]
-
-lmfist<- train(price~. ,data=train_data,method="lm")
-model_test<-data.frame(ubs=test_data$price,pred=predicted_test)
-model_train<-data.frame(obs=test_data$price,pred=predited_test)
-defaultSummary(model_test)
+predicciones <- predict(object = modelo_clean, newdata = clean_data2, interval = "confidence", level = 0.95)
+predicciones2 <- predicciones <- predict(object = modelo_clean, newdata = clean_data2, interval = "predict", level = 0.95)
+summary(predicciones)
+summary(predicciones2)
+plot(predict(modelo_clean), clean_data2$price, ylab="Precio", main = "Valores predecidos vs Actuales", abline(a=0, b=1, col="blue", lwd=2))
+ 
+hist(predict(modelo_clean))
+hist(clean_data2$price)
 ```
 
 
-```{r}
-imcdiag(select(clean_data, -c("price","date")), clean_data$price)
-```
 
 
