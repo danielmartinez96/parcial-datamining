@@ -545,6 +545,8 @@ clean_data=mutate(clean_data,bedbat=ifelse(bedrooms>0,bathrooms/bedrooms,bathroo
 clean_data=filter(clean_data,bedrooms<15)
 clean_data=filter(clean_data,bedbat>0)
 clean_data=filter(clean_data,bedbat<=2)
+clean_data=mutate(clean_data,bathrooms= round(as.double(bathrooms)))
+
 
 #zip code lat y long
 data_latlong$long=as.numeric(data_latlong$long)
@@ -555,6 +557,7 @@ data_latlong=filter(data_latlong,lat>(47.2))
 # Fecha a antiguedad
 clean_data$date =  as.Date(clean_data$date, format = "%Y%m%dT000000")
 clean_data= mutate(clean_data,antiguedad = ifelse(yr_renovated>0,yr_renovated-yr_built,year(date)-yr_built))
+clean_data= mutate(clean_data,antiguedad = ifelse(antiguedad>0,antiguedad,0))
 
 #clean_data$price=clean_data$price/mean(clean_data$price)
 
@@ -648,6 +651,7 @@ summary(lm(price~antiguedad,data=clean_data))
 ### 3 Regresion final
 ```{r regresion final}
 clean_data2= select(clean_data,-c("date","condition","sqft_basement","sqft_above","bedbat","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront"))
+clean_data2 = mutate(clean_data2, sqft_lot15 = log(sqft_lot15))
 modelo_clean <- lm(formula = price ~ . , data =clean_data2 )
 
 
