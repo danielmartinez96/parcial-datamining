@@ -41,7 +41,8 @@ library("mctest") # libreria para calculo de TOF Y VIF
 
 ## 2.1 Cargar del DataSet
 ```{r Carga del DataSet}
-a_raw_data <- read.csv("house_data.csv")
+raw_data <- read.csv("house_data.csv")
+a_raw_data <- select(raw_data, -c("id"))
 ```
 
  
@@ -156,14 +157,14 @@ plot(price~., data=a_raw_data,col="blue")
 ## 4.3 Estudio de correlacion   
 
 ```{r Estudio de correlacion}
-corrplot(cor(select(a_raw_data,-c("id","date"))),type="upper", method="pie")
-cor(select(a_raw_data,-c("id","date")))
+corrplot(cor(select(a_raw_data,-c("date"))),type="upper", method="pie")
+cor(select(a_raw_data,-c("date")))
 ```
 
 * Mediante el diagrama de correlacion sobre el raw_data, existe una fuerte relación entre la variable objetivo price y las variables sqft_living, grade, sqft_above y sqft_living15.   
 
 ```{r Correlacion sobre DataRaw}
-imcdiag(select(a_raw_data, -c("price","date", "id")), a_raw_data$price)
+imcdiag(select(a_raw_data, -c("price","date")), a_raw_data$price)
 ```
 
 * Se observa que el valor de VIF en relacion con los atributos sqft_living, sqft_above y sqft_basement, es muy elevado, lo cual puede implicar colinealidad.     
@@ -171,7 +172,7 @@ imcdiag(select(a_raw_data, -c("price","date", "id")), a_raw_data$price)
 # 5 Regresion lineal con raw data 
 
 ```{r Regresion lineal con dataSet sin limpiar}
-lm_sin_limpiar <- lm(data = a_raw_data,formula = price ~ . -id -date)
+lm_sin_limpiar <- lm(data = a_raw_data,formula = price ~ . -date)
 summary(lm_sin_limpiar)
 ```
 
@@ -200,22 +201,7 @@ rug(residuos)
 
 # 6.1 Analisis de variables
 
-## 6.2 IDs Duplicados
-
-```{r Registros de precio id duplicado}
-raw_duplicadosID = a_raw_data[duplicated(a_raw_data$id), ]
-dim(raw_duplicadosID)
-```
-
-Existen 177 registros con ID repetidos, pero distintos precio y date. Aparentemente son instancias que fueron vendidas nuevamente en el plazo considerado 2014-2015.   
-
-```{r }
-a_raw_data = a_raw_data %>% group_by(id) %>% filter(price==max(price))
-```
-
-Consideramos las instancias con precio mayor en ese plazo como precio actualizado.    
-
-## 6.3CONDITION & GRADE
+## 6.2 CONDITION & GRADE
 
 ```{r Barplot GRADE VS CONDITION}
 par(mfrow = c(1,2))
@@ -232,7 +218,7 @@ Mediante este grafico de correlacion se puede observar que existe una fuerte rel
 * Aparentemente Grade y Condition refieren la misma caracteristica de una instancia.    
 
 ```{r Correlacion sobre df sin condicion}
-imcdiag(select(a_raw_data, -c("date", "id", "condition")), select(a_raw_data, -c("date", "id", "condition"))$price)
+imcdiag(select(a_raw_data, -c("date", "condition")), select(a_raw_data, -c("date", "condition"))$price)
 ```
 
 Mediante la eliminacion del atributo Condition se redujo el valor de VIF del atributo GRADE.     
@@ -240,7 +226,7 @@ Mediante la eliminacion del atributo Condition se redujo el valor de VIF del atr
 ### Regresion lineal con df sin condicion     
 
 ```{r Regresion lineal con df sin condicion}
-lm_sin_condicion <- lm(formula = price ~ ., data = select(a_raw_data, -c("date", "id", "condition")))
+lm_sin_condicion <- lm(formula = price ~ ., data = select(a_raw_data, -c("date", "condition")))
 summary(lm_sin_condicion)
 ```
 
@@ -329,7 +315,7 @@ plot(price~antiguedad,data=df_antiguedad)
 ## Regresion lineal con Atributo Antiguedad
 
 ```{r Regresion lineal con antiguedad}
-modelo_fecha<-lm(price ~ . -yr_renovated -yr_built -date -id, data=df_antiguedad)
+modelo_fecha<-lm(price ~ . -yr_renovated -yr_built -date , data=df_antiguedad)
 summary(modelo_fecha)
 ```
 
@@ -437,7 +423,7 @@ Luego de esta prueba con las variables que tenia pensado quitar me dio unas graf
 
 ```{r Precio / metro cuadrado 2}
 
-lm_sin_condicion <- lm(formula = price ~ . -id, data = select(precio_lot2, -c("date", "id", "condition","sqft_basement","sqft_above","sqft_price","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront")))
+lm_sin_condicion <- lm(formula = price ~ . , data = select(precio_lot2, -c("date",  "condition","sqft_basement","sqft_above","sqft_price","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront")))
 summary(lm_sin_condicion)
 par(mfrow=c(2,2))
 plot(lm_sin_condicion)
@@ -661,7 +647,7 @@ summary(lm(price~antiguedad,data=clean_data))
 
 ### 3 Regresion final
 ```{r regresion final}
-clean_data2= select(clean_data,-c("id","date","condition","sqft_basement","sqft_above","bedbat","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront"))
+clean_data2= select(clean_data,-c("date","condition","sqft_basement","sqft_above","bedbat","lat","long","sqft_living","sqft_lot","yr_built","yr_renovated","view","waterfront"))
 modelo_clean <- lm(formula = price ~ . , data =clean_data2 )
 
 
