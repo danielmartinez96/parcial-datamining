@@ -12,7 +12,7 @@ output:
     fig:width: 6
     toc: yes
     toc_float: yes
-author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinez"
+author: "Alvarez Ignacio Nicolas-Martinez Daniel Martinezsadasdasd"
 ---
 
 # 1 Carga de Librerias
